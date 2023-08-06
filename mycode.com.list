@@ -1,0 +1,145 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+mycode.com -- emu8086 assembler version: 4.08  
+ 
+[ 01/12/2022  --  08:24:28 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ; add your code here
+[   8]        :                                       
+[   9]        :                                       count equ 5
+[  10]        :                                       cr equ 10
+[  11]        :                                       lf equ 13
+[  12]    0100: EB 24                                 .data
+[  13]    0102: 00 00 00 00 00                        number db 5 dup(?)
+[  14]    0107: 65 6E 74 65 72 20 74 68 65 20 63 68   message db 'enter the char:$'
+                61 72 3A 24                         
+[  15]    0117: 65 6E 74 65 72 20 74 68 65 20 6B 65   inputc db 'enter the key:$'
+                79 3A 24                            
+[  16]    0126:                                       .code
+[  17]    0126:                                       main proc far
+[  18]    0126: 8C C8                                 mov ax,@data
+[  19]    0128: 8E D8                                 mov ds,ax
+[  20]    012A: BE 02 01                              mov si,offset number ;si=number[0]
+[  21]    012D: B9 05 00                              mov cx,count
+[  22]    0130:                                       input:
+[  23]    0130: B4 09                                 mov ah,09
+[  24]    0132: BA 07 01                              mov dx,offset message
+[  25]    0135: CD 21                                 int 21h
+[  26]    0137: B4 01                                 mov ah,01
+[  27]    0139: CD 21                                 int 21h
+[  28]    013B: 88 04                                 mov [si],al
+[  29]    013D: B4 02                                 mov ah,02
+[  30]    013F: B2 0A                                 mov dl,cr
+[  31]    0141: CD 21                                 int 21h
+[  32]    0143: B2 0D                                 mov dl,lf
+[  33]    0145: CD 21                                 int 21h
+[  34]    0147: 46                                    inc si
+[  35]    0148: E2 E6                                 loop input
+[  36]        :                                       
+[  37]        :                                       ;begin sort label
+[  38]    014A:                                       BeginSort:
+[  39]        :                                       
+[  40]    014A: B3 00                                 mov bl,0
+[  41]    014C: BA 00 00                              mov dx,0
+[  42]    014F: BE 02 01                              mov si,offset number ;home array
+[  43]    0152: BF 02 01                              mov di,offset number ;home array
+[  44]    0155: 47                                    inc di ;array+1 if si[o] and di[0+1]
+[  45]    0156: B9 05 00                              mov cx,count
+[  46]    0159: 49                                    dec cx;becuse 5 loop is 4 and 5-1
+[  47]    015A:                                       Process:
+[  48]        :                                       
+[  49]    015A: 8A 14                                 mov dl,[si] ;dl = first home
+[  50]    015C: 3A 15                                 cmp dl,[di] ;cmp [i] and [i+1] if i>i+1 is swap else dontswap
+[  51]    015E: 77 02                                 ja swap
+[  52]    0160: EB 08                                 jmp dontswap
+[  53]    0162:                                       swap:
+[  54]    0162: 8A 35                                 mov dh,[di];swap
+[  55]    0164: 88 15                                 mov [di],dl;swap
+[  56]    0166: 88 34                                 mov [si],dh;swap
+[  57]    0168: B3 01                                 mov bl,1; bl is flag and bl=1 the swap
+[  58]    016A:                                       dontswap:
+[  59]    016A: 46                                    inc si
+[  60]    016B: 47                                    inc di
+[  61]    016C: E2 EC                                 loop process
+[  62]        :                                       
+[  63]    016E: 80 FB 01                              cmp bl,1 ;bl=1 and enter beginsort
+[  64]    0171: 74 D7                                 je BeginSort
+[  65]    0173: EB 00                                 jmp search
+[  66]    0175:                                       search:
+[  67]    0175: B8 00 00                              mov ax,0  ; ax=0 becuse middel item in ax
+[  68]    0178: B4 09                                 mov ah,09 ;print
+[  69]    017A: BA 17 01                              mov dx,offset inputc
+[  70]    017D: CD 21                                 int 21h
+[  71]        :                                       
+[  72]    017F: B4 01                                 mov ah,1 ;ah is enter user
+[  73]    0181: CD 21                                 int 21h ; give puse key the user
+[  74]        :                                       
+[  75]    0183: 8A F8                                 mov  bh,al ; search key in bh
+[  76]        :                                       
+[  77]    0185: B3 02                                 mov bl,2 ; /2 and find middel item
+[  78]    0187: B2 00                                 mov dl,0 ; start index array
+[  79]    0189: B6 04                                 mov dh,4 ; end index array
+[  80]        :                                       
+[  81]    018B:                                       start:
+[  82]    018B: B8 00 00                              mov ax,0
+[  83]    018E: BE 02 01                              mov si,offset number ;si = first element array
+[  84]    0191: 3A D6                                 cmp dl,dh  ; the dl<dh and continue else endofsearch
+[  85]    0193: 7E 02                                 jle continue
+[  86]    0195: EB 28                                 jmp endofsearch
+[  87]    0197:                                       continue:
+[  88]    0197: 8A C2                                 mov al,dl ; start element in al
+[  89]    0199: 02 C6                                 add al,dh ; add first and end element and in al = 0+4
+[  90]    019B: F6 F3                                 div bl ;4/2 = 2
+[  91]    019D: B4 00                                 mov ah,0 ;baghimande in ah and not important and ah = 0
+[  92]    019F: 03 F0                                 add si,ax  ; si += ax is first+middel
+[  93]    01A1: 3A 3C                                 cmp bh,[si] ;element key == middel element in found else if element key < middel element in down part else if > in toppart
+[  94]    01A3: 74 04                                 je found
+[  95]    01A5: 7C 0C                                 jl downpart
+[  96]    01A7: 77 10                                 ja toppart
+[  97]    01A9:                                       found:
+[  98]    01A9: B4 02                                 mov ah,02 ; function-2 the puse21 print index
+[  99]    01AB: 04 30                                 add al,30h ; start asccii numbers in 48 and 48 is 30h and becuse start array is 1 and 30+1
+[ 100]    01AD: 8A D0                                 mov dl,al ; al is middel element
+[ 101]    01AF: CD 21                                 int 21h
+[ 102]    01B1: EB 12                                 jmp finish  ; end of program
+[ 103]    01B3:                                       downpart:
+[ 104]    01B3: 8A F0                                 mov dh, al ; dh = al is middel element
+[ 105]    01B5: FE CE                                 dec dh  ; dh-- and search dl to mid-1
+[ 106]    01B7: EB D2                                 jmp start
+[ 107]    01B9:                                       toppart:
+[ 108]    01B9: 8A D0                                 mov dl,al ; dl = al
+[ 109]    01BB: FE C2                                 inc dl  ; dl++  and search in dh to mid+1
+[ 110]    01BD: EB CC                                 jmp start
+[ 111]    01BF:                                       endofsearch:      ; is not key search in array
+[ 112]    01BF: B4 02                                 mov ah,02
+[ 113]    01C1: B2 4E                                 mov dl, 'N'  ; not find element
+[ 114]    01C3: CD 21                                 int 21h
+[ 115]    01C5:                                       finish:
+[ 116]        :                                       main endp
+[ 117]        :                                       
+[ 118]        :                                       end main
+[ 119]        :                                       ;ret
+[ 120]        :                                       
+[ 121]        :                                       
+[ 122]        :                                       
+[ 123]        :                                       
+[ 124]        :                                       
+[ 125]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

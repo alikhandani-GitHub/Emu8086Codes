@@ -1,0 +1,15 @@
+< THE SYMBOL TABLE >  binarysearch-4.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+BIN_SEARCH               	00100     	-1        	NEAR      	(NOSEG)   
+@START_BIN_SEARCH        	0010B     	-1        	LABEL     	(NOSEG)   
+@BIG_PIVOT_BIN_SEARCH    	00123     	-1        	LABEL     	(NOSEG)   
+@SMALL_PIVOT_BIN_SEARCH  	00128     	-1        	LABEL     	(NOSEG)   
+@NOT_FOUND_BIN_SEARCH    	0012D     	-1        	LABEL     	(NOSEG)   
+@FOUND_BIN_SEARCH        	00132     	-1        	LABEL     	(NOSEG)   
+@END_BIN_SEARCH          	00134     	-1        	LABEL     	(NOSEG)   
+===================================================================================================
+[ 02/12/2022  --  05:15:04 È.Ù ] 
+< END >
+ 

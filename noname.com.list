@@ -1,0 +1,571 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+noname.com -- emu8086 assembler version: 4.08  
+ 
+[ 09/01/2023  --  07:10:32 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ; add your code here
+[   8]        :                                       ;;=============================================================================;;
+[   9]        :                                       ;;                                                                             ;;
+[  10]        :                                       ;;              Balloon Shooting Game                                          ;;
+[  11]        :                                       ;;                                                                             ;;
+[  12]        :                                       ;;                                                                             ;;
+[  13]        :                                       ;;                                                                             ;;
+[  14]        :                                       ;;              Md. Rezve Hasan     13141103056                                ;;
+[  15]        :                                       ;;                                                                             ;;
+[  16]        :                                       ;;                                                                             ;;
+[  17]        :                                       ;;=============================================================================;;
+[  18]        :                                       
+[  19]        :                                       .model large
+[  20]    0100: E9 EC 05                              .data
+[  21]        :                                       
+[  22]    0103: 00                                    exit db 0
+[  23]    0104: E0 06                                 player_pos dw 1760d                         ;position of player
+[  24]        :                                       
+[  25]    0106: 00 00                                 arrow_pos dw 0d                             ;position of arrow
+[  26]    0108: 00                                    arrow_status db 0d                          ;0 = arrow ready to go else not
+[  27]    0109: 16 00                                 arrow_limit dw  22d     ;150d
+[  28]        :                                       
+[  29]    010B: 14 0F                                 loon_pos dw 3860d       ;3990d
+[  30]    010D: 00                                    loon_status db 0d
+[  31]        :                                       
+[  32]        :                                       ;direction of player
+[  33]        :                                       ;up=8, down=2
+[  34]    010E: 00                                    direction db 0d
+[  35]        :                                       
+[  36]    010F: 30 30 3A 30 3A 30 3A 30 3A 30 3A 30   state_buf db '00:0:0:0:0:0:00:00$'          ;score veriable
+                3A 30 30 3A 30 30 24                
+[  37]    0122: 00                                    hit_num db 0d
+[  38]    0123: 00 00                                 hits dw 0d
+[  39]    0125: 00 00                                 miss dw 0d
+[  40]        :                                       
+[  41]    0127: 20 20 0A 00 0D 00                     game_over_str dw '  ',0ah,0dh
+[  42]    012D: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                             |               |',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 7C 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 7C 0A 00 
+                0D 00                               
+[  43]    015F: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                             |---------------|',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 7C 2D 2D 2D 2D 2D 2D 
+                2D 2D 2D 2D 2D 2D 2D 2D 2D 7C 0A 00 
+                0D 00                               
+[  44]    0191: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                             | ^   Score   ^ |',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 7C 20 5E 20 20 20 53 
+                63 6F 72 65 20 20 20 5E 20 7C 0A 00 
+                0D 00                               
+[  45]    01C3: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                             |_______________|',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 7C 5F 5F 5F 5F 5F 5F 
+                5F 5F 5F 5F 5F 5F 5F 5F 5F 7C 0A 00 
+                0D 00                               
+[  46]    01F5: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  47]    01FB: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  48]    0201: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  49]    0207: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  50]    020D: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  51]    0213: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  52]    0219: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                                Game Over',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 47 61 6D 65 
+                20 4F 76 65 72 00 0A 00 0D 00       
+[  53]    0247: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                        Press Enter to start again$',0ah,0dh
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                50 72 65 73 73 20 45 6E 74 65 72 20 
+                74 6F 20 73 74 61 72 74 20 61 67 61 
+                69 6E 24 00 0A 00 0D 00             
+[  54]        :                                       
+[  55]        :                                       
+[  56]    027F: 20 20 0A 00 0D 00                     game_start_str dw '  ',0ah,0dh
+[  57]        :                                       
+[  58]    0285: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  59]    028B: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  60]    0291: 20 00 0A 00 0D 00                     dw ' ',0ah,0dh
+[  61]    0297: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                ====================================================',0ah,0dh
+                20 20 20 20 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 0A 00 0D 00 
+                                                    
+[  62]    02DF: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  63]    0329: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||       *    Balloon Shooting Game      *          ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                2A 20 20 20 20 42 61 6C 6C 6F 6F 6E 
+                20 53 68 6F 6F 74 69 6E 67 20 47 61 
+                6D 65 20 20 20 20 20 20 2A 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  64]    0373: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  65]    03BD: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||--------------------------------------------------||',0ah,0dh
+                20 20 20 7C 7C 2D 2D 2D 2D 2D 2D 2D 
+                2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 
+                2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 
+                2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 
+                2D 2D 2D 2D 2D 2D 2D 7C 7C 00 0A 00 
+                0D 00                               
+[  66]    0407: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  67]    0451: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  68]    049B: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  69]    04E5: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||     Use up and down key to move player           ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 55 73 
+                65 20 75 70 20 61 6E 64 20 64 6F 77 
+                6E 20 6B 65 79 20 74 6F 20 6D 6F 76 
+                65 20 70 6C 61 79 65 72 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  70]    052F: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||          and space button to shoot               ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 61 6E 64 20 73 70 61 63 65 
+                20 62 75 74 74 6F 6E 20 74 6F 20 73 
+                68 6F 6F 74 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  71]    0579: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  72]    05C3: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||            Press Enter to start                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 50 72 65 73 73 20 45 
+                6E 74 65 72 20 74 6F 20 73 74 61 72 
+                74 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  73]    060D: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  74]    0657: 20 20 20 20 20 20 20 20 20 20 20 20   dw '               ||                                                  ||',0ah,0dh
+                20 20 20 7C 7C 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 20 20 20 20 20 
+                20 20 20 20 20 20 20 7C 7C 00 0A 00 
+                0D 00                               
+[  75]    06A1: 20 20 20 20 20 20 20 20 20 20 20 20   dw '                ====================================================',0ah,0dh
+                20 20 20 20 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 
+                3D 3D 3D 3D 3D 3D 3D 3D 0A 00 0D 00 
+                                                    
+[  76]    06E9: 24 00 0A 00 0D 00                     dw '$',0ah,0dh
+[  77]        :                                       
+[  78]        :                                       
+[  79]        :                                       
+[  80]        :                                       
+[  81]    06EF:                                       .code
+[  82]    06EF:                                       main proc
+[  83]    06EF: 8C C8                                 mov ax,@data
+[  84]    06F1: 8E D8                                 mov ds,ax
+[  85]        :                                       
+[  86]    06F3: B8 00 B8                              mov ax, 0B800h
+[  87]    06F6: 8E C0                                 mov es,ax
+[  88]        :                                       
+[  89]        :                                       
+[  90]        :                                       
+[  91]    06F8: E9 02 02                              jmp game_menu                              ;display main menu
+[  92]        :                                       
+[  93]        :                                       
+[  94]    06FB:                                       main_loop:                                 ;update logic and display everything
+[  95]        :                                       ;check any key is pressed
+[  96]    06FB: B4 01                                 mov ah,1h
+[  97]    06FD: CD 16                                 int 16h                                ;go if pressed
+[  98]    06FF: 74 03 E9 EE 00                        jnz key_pressed
+[  99]    0704: EB 00                                 jmp inside_loop                        ;or just continue
+[ 100]        :                                       
+[ 101]    0706:                                       inside_loop:                           ;checking every thing
+[ 102]        :                                       
+[ 103]    0706: 83 3E 25 01 09                        cmp miss,9                         ;if baloon miss 9 times.go to game over section
+[ 104]    070B: 7C 03 E9 95 01                        jge game_over
+[ 105]        :                                       
+[ 106]    0710: 8B 16 06 01                           mov dx,arrow_pos                   ;checking collitions
+[ 107]    0714: 3B 16 0B 01                           cmp dx, loon_pos
+[ 108]    0718: 74 2D                                 je hit
+[ 109]        :                                       
+[ 110]    071A: 80 3E 0E 01 08                        cmp direction,8d                   ;update player position
+[ 111]    071F: 75 03 E9 9E 00                        je player_up
+[ 112]    0724: 80 3E 0E 01 02                        cmp direction,2d                   ;up or down based on direction veriable
+[ 113]    0729: 75 03 E9 AC 00                        je player_down
+[ 114]        :                                       
+[ 115]    072E: 8B 16 09 01                           mov dx,arrow_limit                 ;hide arrow
+[ 116]    0732: 39 16 06 01                           cmp arrow_pos, dx
+[ 117]    0736: 7C 03 E9 4B 01                        jge hide_arrow
+[ 118]        :                                       
+[ 119]    073B: 83 3E 0B 01 00                        cmp loon_pos, 0d                   ;check missed loon
+[ 120]    0740: 7F 03 E9 19 01                        jle miss_loon
+[ 121]    0745: 75 21                                 jne render_loon
+[ 122]        :                                       
+[ 123]    0747:                                       hit:                               ;play sound if hit
+[ 124]    0747: B4 02                                 mov ah,2
+[ 125]    0749: BA 07 00                              mov dx, 7d
+[ 126]    074C: CD 21                                 int 21h
+[ 127]        :                                       
+[ 128]    074E: FF 06 23 01                           inc hits                       ;update score
+[ 129]        :                                       
+[ 130]    0752: BB 0F 01                              lea bx,state_buf               ;display score
+[ 131]    0755: E8 D4 01                              call show_score
+[ 132]    0758: BA 0F 01                              lea dx,state_buf
+[ 133]    075B: B4 09                                 mov ah,09h
+[ 134]    075D: CD 21                                 int 21h
+[ 135]        :                                       
+[ 136]    075F: B4 02                                 mov ah,2                       ;new line
+[ 137]    0761: B2 0D                                 mov dl, 0dh
+[ 138]    0763: CD 21                                 int 21h
+[ 139]        :                                       
+[ 140]    0765: E9 10 01                              jmp fire_loon                  ;new loon pops up
+[ 141]        :                                       
+[ 142]    0768:                                       render_loon:                       ;draw loon
+[ 143]    0768: B1 20                                 mov cl, ' '                    ;hide old loon
+[ 144]    076A: B5 0F                                 mov ch, 1111b
+[ 145]        :                                       
+[ 146]    076C: 8B 1E 0B 01                           mov bx,loon_pos
+[ 147]    0770: 26 89 0F                              mov es:[bx], cx
+[ 148]        :                                       
+[ 149]    0773: 81 2E 0B 01 A0 00                     sub loon_pos,160d              ;and draw new one in new position
+[ 150]    0779: B1 0F                                 mov cl, 15d
+[ 151]    077B: B5 0D                                 mov ch, 1101b
+[ 152]        :                                       
+[ 153]    077D: 8B 1E 0B 01                           mov bx,loon_pos
+[ 154]    0781: 26 89 0F                              mov es:[bx], cx
+[ 155]        :                                       
+[ 156]    0784: 80 3E 08 01 01                        cmp arrow_status,1d            ;check any arrow to rander
+[ 157]    0789: 74 02                                 je render_arrow
+[ 158]    078B: 75 1B                                 jne inside_loop2
+[ 159]        :                                       
+[ 160]    078D:                                       render_arrow:                      ;render arrow
+[ 161]        :                                       
+[ 162]    078D: B1 20                                 mov cl, ' '
+[ 163]    078F: B5 0F                                 mov ch, 1111b
+[ 164]        :                                       
+[ 165]    0791: 8B 1E 06 01                           mov bx,arrow_pos               ;hide old position
+[ 166]    0795: 26 89 0F                              mov es:[bx], cx
+[ 167]        :                                       
+[ 168]    0798: 83 06 06 01 04                        add arrow_pos,4d               ;draw new position
+[ 169]    079D: B1 1A                                 mov cl, 26d
+[ 170]    079F: B5 09                                 mov ch, 1001b
+[ 171]        :                                       
+[ 172]    07A1: 8B 1E 06 01                           mov bx,arrow_pos
+[ 173]    07A5: 26 89 0F                              mov es:[bx], cx
+[ 174]        :                                       
+[ 175]    07A8:                                       inside_loop2:
+[ 176]        :                                       
+[ 177]    07A8: B1 7D                                 mov cl, 125d                  ;draw player
+[ 178]    07AA: B5 0C                                 mov ch, 1100b
+[ 179]        :                                       
+[ 180]    07AC: 8B 1E 04 01                           mov bx,player_pos
+[ 181]    07B0: 26 89 0F                              mov es:[bx], cx
+[ 182]        :                                       
+[ 183]        :                                       
+[ 184]        :                                       
+[ 185]    07B3: 80 3E 03 01 00                        cmp exit,0
+[ 186]    07B8: 75 03 E9 3E FF                        je main_loop                          ;end main loop
+[ 187]    07BD: E9 67 01                              jmp exit_game
+[ 188]        :                                       
+[ 189]    07C0: EB E6                                 jmp inside_loop2
+[ 190]        :                                       
+[ 191]    07C2:                                       player_up:                                ;hide player old position
+[ 192]    07C2: B1 20                                 mov cl, ' '
+[ 193]    07C4: B5 0F                                 mov ch, 1111b
+[ 194]        :                                       
+[ 195]    07C6: 8B 1E 04 01                           mov bx,player_pos
+[ 196]    07CA: 26 89 0F                              mov es:[bx], cx
+[ 197]        :                                       
+[ 198]    07CD: 81 2E 04 01 A0 00                     sub player_pos, 160d                  ;set new postion of player
+[ 199]    07D3: C6 06 0E 01 00                        mov direction, 0
+[ 200]        :                                       
+[ 201]    07D8: EB CE                                 jmp inside_loop2                      ;it will draw in main loop
+[ 202]        :                                       
+[ 203]    07DA:                                       player_down:
+[ 204]    07DA: B1 20                                 mov cl, ' '                           ;same as player up
+[ 205]    07DC: B5 0F                                 mov ch, 1111b                         ;hide old one and set new postion
+[ 206]        :                                       
+[ 207]    07DE: 8B 1E 04 01                           mov bx,player_pos
+[ 208]    07E2: 26 89 0F                              mov es:[bx], cx
+[ 209]        :                                       
+[ 210]    07E5: 81 06 04 01 A0 00                     add player_pos,160d                   ;and main loop draw that
+[ 211]    07EB: C6 06 0E 01 00                        mov direction, 0
+[ 212]        :                                       
+[ 213]    07F0: EB B6                                 jmp inside_loop2
+[ 214]        :                                       
+[ 215]    07F2:                                       key_pressed:                              ;input hanaling section
+[ 216]    07F2: B4 00                                 mov ah,0
+[ 217]    07F4: CD 16                                 int 16h
+[ 218]        :                                       
+[ 219]    07F6: 80 FC 48                              cmp ah,48h                            ;go upKey if up button is pressed
+[ 220]    07F9: 74 2C                                 je upKey
+[ 221]    07FB: 80 FC 50                              cmp ah, 50h
+[ 222]    07FE: 74 2F                                 je downKey
+[ 223]        :                                       
+[ 224]    0800: 80 FC 39                              cmp ah,39h                            ;go spaceKey if up button is pressed
+[ 225]    0803: 74 32                                 je spaceKey
+[ 226]        :                                       
+[ 227]    0805: 80 FC 4B                              cmp ah,4Bh                            ;go leftKey (this is for debuging)
+[ 228]    0808: 74 03                                 je leftKey
+[ 229]        :                                       
+[ 230]        :                                       ;if no key is pressed go to inside of loop
+[ 231]    080A: E9 F9 FE                              jmp inside_loop
+[ 232]        :                                       
+[ 233]    080D:                                       leftKey:                                  ;we use it for debuging
+[ 234]        :                                       ;jmp game_over
+[ 235]    080D: FF 06 25 01                           inc miss
+[ 236]        :                                       
+[ 237]    0811: BB 0F 01                              lea bx,state_buf
+[ 238]    0814: E8 15 01                              call show_score
+[ 239]    0817: BA 0F 01                              lea dx,state_buf
+[ 240]    081A: B4 09                                 mov ah,09h
+[ 241]    081C: CD 21                                 int 21h
+[ 242]        :                                       
+[ 243]    081E: B4 02                                 mov ah,2
+[ 244]    0820: B2 0D                                 mov dl, 0dh
+[ 245]    0822: CD 21                                 int 21h
+[ 246]    0824: E9 DF FE                              jmp inside_loop
+[ 247]        :                                       
+[ 248]    0827:                                       upKey:                                    ;set player direction to up
+[ 249]    0827: C6 06 0E 01 08                        mov direction, 8d
+[ 250]    082C: E9 D7 FE                              jmp inside_loop
+[ 251]        :                                       
+[ 252]    082F:                                       downKey:
+[ 253]    082F: C6 06 0E 01 02                        mov direction, 2d                     ;set player direction to down
+[ 254]    0834: E9 CF FE                              jmp inside_loop
+[ 255]        :                                       
+[ 256]    0837:                                       spaceKey:                                 ;shoot a arrow
+[ 257]    0837: 80 3E 08 01 00                        cmp arrow_status,0
+[ 258]    083C: 74 03                                 je  fire_arrow
+[ 259]    083E: E9 C5 FE                              jmp inside_loop
+[ 260]        :                                       
+[ 261]    0841:                                       fire_arrow:                               ;set arrow postion in player position
+[ 262]    0841: 8B 16 04 01                           mov dx, player_pos                    ;so arrow fire from player postion
+[ 263]    0845: 89 16 06 01                           mov arrow_pos, dx
+[ 264]        :                                       
+[ 265]    0849: 8B 16 04 01                           mov dx,player_pos                     ;when fire an arrow it also set limit
+[ 266]    084D: 89 16 09 01                           mov arrow_limit, dx                   ;of arrow. where it should be hide
+[ 267]    0851: 83 06 09 01 16                        add arrow_limit, 22d  ;150
+[ 268]        :                                       
+[ 269]    0856: C6 06 08 01 01                        mov arrow_status, 1d                  ;set arrow status.It prevents multiple
+[ 270]    085B: E9 A8 FE                              jmp inside_loop                       ;shooting
+[ 271]        :                                       
+[ 272]    085E:                                       miss_loon:
+[ 273]    085E: 83 06 25 01 01                        add miss,1                            ;update score
+[ 274]        :                                       
+[ 275]    0863: BB 0F 01                              lea bx,state_buf                      ;display score
+[ 276]    0866: E8 C3 00                              call show_score
+[ 277]    0869: BA 0F 01                              lea dx,state_buf
+[ 278]    086C: B4 09                                 mov ah,09h
+[ 279]    086E: CD 21                                 int 21h
+[ 280]        :                                       ;new line
+[ 281]    0870: B4 02                                 mov ah,2
+[ 282]    0872: B2 0D                                 mov dl, 0dh
+[ 283]    0874: CD 21                                 int 21h
+[ 284]    0876: EB 00                                 jmp fire_loon
+[ 285]        :                                       
+[ 286]    0878:                                       fire_loon:                                ;fire new balloon
+[ 287]    0878: C6 06 0D 01 01                        mov loon_status, 1d
+[ 288]    087D: C7 06 0B 01 14 0F                     mov loon_pos, 3860d     ;3990d
+[ 289]    0883: E9 E2 FE                              jmp render_loon
+[ 290]        :                                       
+[ 291]    0886:                                       hide_arrow:
+[ 292]    0886: C6 06 08 01 00                        mov arrow_status, 0                   ;hide arrow
+[ 293]        :                                       
+[ 294]    088B: B1 20                                 mov cl, ' '
+[ 295]    088D: B5 0F                                 mov ch, 1111b
+[ 296]        :                                       
+[ 297]    088F: 8B 1E 06 01                           mov bx,arrow_pos
+[ 298]    0893: 26 89 0F                              mov es:[bx], cx
+[ 299]        :                                       
+[ 300]    0896: 83 3E 0B 01 00                        cmp loon_pos, 0d
+[ 301]    089B: 7E C1                                 jle miss_loon
+[ 302]    089D: 74 03 E9 C6 FE                        jne render_loon
+[ 303]        :                                       
+[ 304]    08A2: E9 03 FF                              jmp inside_loop2
+[ 305]        :                                       ;print game over screen
+[ 306]    08A5:                                       game_over:
+[ 307]    08A5: B4 09                                 mov ah,09h
+[ 308]        :                                       ;mov dh,0
+[ 309]    08A7: BA 27 01                              mov dx, offset game_over_str
+[ 310]    08AA: CD 21                                 int 21h
+[ 311]        :                                       
+[ 312]        :                                       
+[ 313]        :                                       
+[ 314]    08AC: B1 20                                 mov cl, ' '                           ;hide last of screen balloon
+[ 315]    08AE: B5 0F                                 mov ch, 1111b
+[ 316]    08B0: 8B 1E 06 01                           mov bx,arrow_pos
+[ 317]        :                                       
+[ 318]    08B4: B1 20                                 mov cl, ' '                           ;hide player
+[ 319]    08B6: B5 0F                                 mov ch, 1111b
+[ 320]    08B8: 8B 1E 04 01                           mov bx,player_pos
+[ 321]        :                                       
+[ 322]        :                                       
+[ 323]        :                                       ;reset value                          ;update veriable for start again
+[ 324]    08BC: C7 06 25 01 00 00                     mov miss, 0d
+[ 325]    08C2: C7 06 23 01 00 00                     mov hits,0d
+[ 326]        :                                       
+[ 327]    08C8: C7 06 04 01 E0 06                     mov player_pos, 1760d
+[ 328]        :                                       
+[ 329]    08CE: C7 06 06 01 00 00                     mov arrow_pos, 0d
+[ 330]    08D4: C6 06 08 01 00                        mov arrow_status, 0d
+[ 331]    08D9: C7 06 09 01 16 00                     mov arrow_limit, 22d      ;150d
+[ 332]        :                                       
+[ 333]    08DF: C7 06 0B 01 14 0F                     mov loon_pos, 3860d       ;3990d
+[ 334]    08E5: C6 06 0D 01 00                        mov loon_status, 0d
+[ 335]        :                                       
+[ 336]    08EA: C6 06 0E 01 00                        mov direction, 0d
+[ 337]        :                                       ;wait for input
+[ 338]    08EF:                                       input:
+[ 339]    08EF: B4 01                                 mov ah,1
+[ 340]    08F1: CD 21                                 int 21h
+[ 341]    08F3: 3C 0D                                 cmp al,13d
+[ 342]    08F5: 75 F8                                 jne input
+[ 343]    08F7: E8 85 00                              call clear_screen
+[ 344]    08FA: E9 FE FD                              jmp main_loop
+[ 345]        :                                       
+[ 346]        :                                       
+[ 347]    08FD:                                       game_menu:
+[ 348]        :                                       ;game menu screen
+[ 349]    08FD: B4 09                                 mov ah,09h
+[ 350]    08FF: B6 00                                 mov dh,0
+[ 351]    0901: BA 7F 02                              mov dx, offset game_start_str
+[ 352]    0904: CD 21                                 int 21h
+[ 353]        :                                       ;wait for input
+[ 354]    0906:                                       input2:
+[ 355]    0906: B4 01                                 mov ah,1
+[ 356]    0908: CD 21                                 int 21h
+[ 357]    090A: 3C 0D                                 cmp al,13d
+[ 358]    090C: 75 F8                                 jne input2
+[ 359]    090E: E8 6E 00                              call clear_screen
+[ 360]        :                                       
+[ 361]    0911: BB 0F 01                              lea bx,state_buf                   ;display score
+[ 362]    0914: E8 15 00                              call show_score
+[ 363]    0917: BA 0F 01                              lea dx,state_buf
+[ 364]    091A: B4 09                                 mov ah,09h
+[ 365]    091C: CD 21                                 int 21h
+[ 366]        :                                       
+[ 367]    091E: B4 02                                 mov ah,2
+[ 368]    0920: B2 0D                                 mov dl, 0dh
+[ 369]    0922: CD 21                                 int 21h
+[ 370]        :                                       
+[ 371]    0924: E9 D4 FD                              jmp main_loop
+[ 372]        :                                       
+[ 373]    0927:                                       exit_game:                                  ;end of our sweet game :)
+[ 374]    0927: C6 06 03 01 0A                        mov exit,10d
+[ 375]        :                                       
+[ 376]        :                                       main endp
+[ 377]        :                                       
+[ 378]        :                                       
+[ 379]        :                                       
+[ 380]        :                                       ;;--------------------------------------------------------------------;;
+[ 381]        :                                       ;;                                                                    ;;
+[ 382]        :                                       ;;  show score in same postion on screen                              ;;
+[ 383]        :                                       ;;  using base pointer to get segment of veriable                     ;;
+[ 384]        :                                       ;;                                                                    ;;
+[ 385]        :                                       ;;____________________________________________________________________;;
+[ 386]        :                                       
+[ 387]    092C:                                       proc show_score
+[ 388]    092C: BB 0F 01                              lea bx,state_buf
+[ 389]        :                                       
+[ 390]    092F: 8B 16 23 01                           mov dx, hits
+[ 391]    0933: 83 C2 30                              add dx,48d
+[ 392]        :                                       
+[ 393]    0936: C6 07 09                              mov [bx], 9d
+[ 394]    0939: C6 47 01 09                           mov [bx+1], 9d
+[ 395]    093D: C6 47 02 09                           mov [bx+2], 9d
+[ 396]    0941: C6 47 03 09                           mov [bx+3], 9d
+[ 397]    0945: C6 47 04 48                           mov [bx+4], 'H'
+[ 398]    0949: C6 47 05 69                           mov [bx+5], 'i'
+[ 399]    094D: C6 47 06 74                           mov [bx+6], 't'
+[ 400]    0951: C6 47 07 73                           mov [bx+7], 's'
+[ 401]    0955: C6 47 08 3A                           mov [bx+8], ':'
+[ 402]    0959: 89 57 09                              mov [bx+9], dx
+[ 403]        :                                       
+[ 404]    095C: 8B 16 25 01                           mov dx, miss
+[ 405]    0960: 83 C2 30                              add dx,48d
+[ 406]    0963: C6 47 0A 20                           mov [bx+10], ' '
+[ 407]    0967: C6 47 0B 4D                           mov [bx+11], 'M'
+[ 408]    096B: C6 47 0C 69                           mov [bx+12], 'i'
+[ 409]    096F: C6 47 0D 73                           mov [bx+13], 's'
+[ 410]    0973: C6 47 0E 73                           mov [bx+14], 's'
+[ 411]    0977: C6 47 0F 3A                           mov [bx+15], ':'
+[ 412]    097B: 89 57 10                              mov [bx+16], dx
+[ 413]    097E: C3                                    ret
+[ 414]        :                                       show_score endp
+[ 415]        :                                       
+[ 416]        :                                       
+[ 417]        :                                       ;;--------------------------------------------------------------------;;
+[ 418]        :                                       ;;                                                                    ;;
+[ 419]        :                                       ;;  Clear the sceen                                                   ;;
+[ 420]        :                                       ;;  Just set new text mood for avoiding complexicity                  ;;
+[ 421]        :                                       ;;                                                                    ;;
+[ 422]        :                                       ;;____________________________________________________________________;;
+[ 423]        :                                       
+[ 424]    097F:                                       clear_screen proc near
+[ 425]    097F: B4 00                                 mov ah,0
+[ 426]    0981: B0 03                                 mov al,3
+[ 427]    0983: CD 10                                 int 10h
+[ 428]    0985: C3                                    ret
+[ 429]        :                                       clear_screen endp
+[ 430]        :                                       
+[ 431]        :                                       end main
+[ 432]        :                                       
+[ 433]        :                                       ret
+[ 434]        :                                       
+[ 435]        :                                       
+[ 436]        :                                       
+[ 437]        :                                       
+[ 438]        :                                       
+[ 439]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

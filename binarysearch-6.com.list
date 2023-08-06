@@ -1,0 +1,102 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+binarysearch-6.com -- emu8086 assembler version: 4.08  
+ 
+[ 02/12/2022  --  05:27:01 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ; add your code here
+[   8]        :                                       
+[   9]    0100:                                       BIN_SEARCH PROC
+[  10]        :                                       ;search in a sorted array by the binary search method
+[  11]        :                                       ;input: SI = array offset address
+[  12]        :                                       ;       BX = number of elements
+[  13]        :                                       ;       CX = key
+[  14]        :                                       ;output: SI = offset of sorted array
+[  15]        :                                       ;        AX = pos @where key has been found
+[  16]        :                                       ;uses:
+[  17]        :                                       ;PUSH AX
+[  18]    0100: 53                                    PUSH BX
+[  19]    0101: 51                                    PUSH CX
+[  20]    0102: 52                                    PUSH DX
+[  21]    0103: 56                                    PUSH SI
+[  22]    0104: 57                                    PUSH DI
+[  23]        :                                       
+[  24]        :                                       
+[  25]    0105: 8B D3                                 MOV DX,BX   ; DX = rIndex
+[  26]    0107: 4A                                    DEC DX
+[  27]    0108: BB 00 00                              MOV BX,0    ; BX = lIndex
+[  28]        :                                       
+[  29]        :                                       
+[  30]    010B:                                       @START_BIN_SEARCH: ; BX=l,AX=m,DX=r
+[  31]    010B: 3B DA                                 CMP BX,DX ; exit when lIndex > rIndex
+[  32]    010D: 7F 1E                                 JG @NOT_FOUND_BIN_SEARCH
+[  33]    010F: 8B C3                                 MOV AX,BX
+[  34]    0111: 03 C2                                 ADD AX,DX ; AX=BX+DX
+[  35]    0113: D1 E8                                 SHR AX,1 ; AX = midIndex ; m=(l+r)/2
+[  36]        :                                       
+[  37]        :                                       ;MOV SI,AX
+[  38]        :                                       ;ADD SI,SI
+[  39]    0115: 8B FE                                 MOV DI,SI
+[  40]    0117: 03 F8                                 ADD DI,AX
+[  41]    0119: 03 F8                                 ADD DI,AX
+[  42]    011B: 3B 0D                                 CMP CX,[DI]
+[  43]    011D: 74 13                                 JE @FOUND_BIN_SEARCH
+[  44]    011F: 7F 02                                 JG @BIG_PIVOT_BIN_SEARCH
+[  45]    0121: EB 05                                 JMP @SMALL_PIVOT_BIN_SEARCH
+[  46]        :                                       
+[  47]    0123:                                       @BIG_PIVOT_BIN_SEARCH:
+[  48]    0123: 40                                    INC AX
+[  49]    0124: 8B D8                                 MOV BX,AX ; l=m+1
+[  50]    0126: EB E3                                 JMP @START_BIN_SEARCH
+[  51]        :                                       
+[  52]    0128:                                       @SMALL_PIVOT_BIN_SEARCH:
+[  53]    0128: 48                                    DEC AX
+[  54]    0129: 8B D0                                 MOV DX,AX ; r=m-1
+[  55]    012B: EB DE                                 JMP @START_BIN_SEARCH
+[  56]        :                                       
+[  57]        :                                       
+[  58]    012D:                                       @NOT_FOUND_BIN_SEARCH:
+[  59]    012D: B8 FF FF                              MOV AX,-1
+[  60]    0130: EB 02                                 JMP @END_BIN_SEARCH
+[  61]        :                                       
+[  62]    0132:                                       @FOUND_BIN_SEARCH: ; index already in AX
+[  63]        :                                       ;ADD AL,01
+[  64]    0132: EB 00                                 JMP @END_BIN_SEARCH
+[  65]        :                                       
+[  66]        :                                       
+[  67]    0134:                                       @END_BIN_SEARCH:
+[  68]    0134: 5F                                    POP DI
+[  69]    0135: 5E                                    POP SI
+[  70]    0136: 5A                                    POP DX
+[  71]    0137: 59                                    POP CX
+[  72]    0138: 5B                                    POP BX
+[  73]        :                                       ;POP AX
+[  74]    0139: C3                                    RET
+[  75]        :                                       BIN_SEARCH ENDP
+[  76]        :                                       
+[  77]        :                                       
+[  78]    013A: C3                                    ret
+[  79]        :                                       
+[  80]        :                                       
+[  81]        :                                       
+[  82]        :                                       
+[  83]        :                                       
+[  84]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

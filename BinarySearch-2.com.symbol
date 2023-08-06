@@ -1,0 +1,25 @@
+< THE SYMBOL TABLE >  BinarySearch-2.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+NUMBER                   	00102     	1         	VAR       	(NOSEG)   
+MESSAGE                  	0010C     	1         	VAR       	(NOSEG)   
+CODE                     	0011C     	-1        	LABEL     	(NOSEG)   
+MAIN                     	0011C     	-1        	FAR       	(NOSEG)   
+INPUT                    	00126     	-1        	LABEL     	(NOSEG)   
+BEGINSORT                	00140     	-1        	LABEL     	(NOSEG)   
+PROCESS                  	00150     	-1        	LABEL     	(NOSEG)   
+SWAP                     	00158     	-1        	LABEL     	(NOSEG)   
+DONTSWAP                 	00160     	-1        	LABEL     	(NOSEG)   
+SEARCH                   	0016B     	-1        	LABEL     	(NOSEG)   
+START                    	0017C     	-1        	LABEL     	(NOSEG)   
+CONTINUE                 	00185     	-1        	LABEL     	(NOSEG)   
+FOUND                    	00197     	-1        	LABEL     	(NOSEG)   
+DOWNPART                 	001A1     	-1        	LABEL     	(NOSEG)   
+TOPPART                  	001A7     	-1        	LABEL     	(NOSEG)   
+ENDOFSEARCH              	001AD     	-1        	LABEL     	(NOSEG)   
+FINISH                   	001B3     	-1        	LABEL     	(NOSEG)   
+===================================================================================================
+[ 01/12/2022  --  08:12:38 È.Ù ] 
+< END >
+ 

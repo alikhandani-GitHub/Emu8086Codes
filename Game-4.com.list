@@ -1,0 +1,242 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+Game-4.com -- emu8086 assembler version: 4.08  
+ 
+[ 09/01/2023  --  07:21:45 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]    0100: E9 B5 00                              jmp start       ; jump over data declaration
+[   8]        :                                       
+[   9]    0103: 31 2D 41 64 64 0D 0A 32 2D 4D 75 6C   msg:    db      "1-Add",0dh,0ah,"2-Multiply",0dh,0ah,"3-Subtract",0dh,0ah,"4-Divide", 0Dh,0Ah, '$'
+                74 69 70 6C 79 0D 0A 33 2D 53 75 62 
+                74 72 61 63 74 0D 0A 34 2D 44 69 76 
+                69 64 65 0D 0A 24                   
+[  10]    012D: 0D 0A 45 6E 74 65 72 20 46 69 72 73   msg2:    db      0dh,0ah,"Enter First No: $"
+                74 20 4E 6F 3A 20 24                
+[  11]    0140: 0D 0A 45 6E 74 65 72 20 53 65 63 6F   msg3:    db      0dh,0ah,"Enter Second No: $"
+                6E 64 20 4E 6F 3A 20 24             
+[  12]    0154: 0D 0A 43 68 6F 69 63 65 20 45 72 72   msg4:    db      0dh,0ah,"Choice Error $"
+                6F 72 20 24                         
+[  13]    0164: 0D 0A 52 65 73 75 6C 74 3A 20 24      msg5:    db      0dh,0ah,"Result : $"
+[  14]    016F: 0D 0A 74 68 61 6E 6B 20 79 6F 75 20   msg6:    db      0dh,0ah ,'thank you for using the simple calculator! press any key to exit... ', 0Dh,0Ah, '$'
+                66 6F 72 20 75 73 69 6E 67 20 74 68 
+                65 20 73 69 6D 70 6C 65 20 63 61 6C 
+                63 75 6C 61 74 6F 72 21 20 70 72 65 
+                73 73 20 61 6E 79 20 6B 65 79 20 74 
+                6F 20 65 78 69 74 2E 2E 2E 20 0D 0A 
+                24                                  
+[  15]        :                                       
+[  16]    01B8: B4 09                                 start:  mov ah,9
+[  17]    01BA: BA 03 01                              mov dx, offset msg ;first we will display hte first message from which he can choose the operation using int 21h
+[  18]    01BD: CD 21                                 int 21h
+[  19]    01BF: B4 00                                 mov ah,0
+[  20]    01C1: CD 16                                 int 16h  ;then we will use int 16h to read a key press, to know the operation he choosed
+[  21]    01C3: 3C 31                                 cmp al,31h ;the keypress will be stored in al so, we will comapre to 1 addition ..........
+[  22]    01C5: 74 22                                 je Addition
+[  23]    01C7: 3C 32                                 cmp al,32h
+[  24]    01C9: 75 03 E9 B7 00                        je Multiply
+[  25]    01CE: 3C 33                                 cmp al,33h
+[  26]    01D0: 75 03 E9 E3 00                        je Subtract
+[  27]    01D5: 3C 34                                 cmp al,34h
+[  28]    01D7: 75 03 E9 0D 01                        je Divide
+[  29]    01DC: B4 09                                 mov ah,09h
+[  30]    01DE: BA 54 01                              mov dx, offset msg4
+[  31]    01E1: CD 21                                 int 21h
+[  32]    01E3: B4 00                                 mov ah,0
+[  33]    01E5: CD 16                                 int 16h
+[  34]    01E7: EB CF                                 jmp start
+[  35]        :                                       
+[  36]    01E9: B4 09                                 Addition:   mov ah,9  ;then let us handle the case of addition operation
+[  37]    01EB: BA 2D 01                              mov dx, offset msg2  ;first we will display this message enter first no also using int 21h
+[  38]    01EE: CD 21                                 int 21h
+[  39]    01F0: B9 00 00                              mov cx,0 ;we will call InputNo to handle our input as we will take each number seprately
+[  40]    01F3: E8 22 00                              call InputNo  ;first we will move to cx 0 because we will increment on it later in InputNo
+[  41]    01F6: 52                                    push dx
+[  42]    01F7: B4 09                                 mov ah,9
+[  43]    01F9: BA 40 01                              mov dx, offset msg3
+[  44]    01FC: CD 21                                 int 21h
+[  45]    01FE: B9 00 00                              mov cx,0
+[  46]    0201: E8 14 00                              call InputNo
+[  47]    0204: 5B                                    pop bx
+[  48]    0205: 03 D3                                 add dx,bx
+[  49]    0207: 52                                    push dx
+[  50]    0208: B4 09                                 mov ah,9
+[  51]    020A: BA 64 01                              mov dx, offset msg5
+[  52]    020D: CD 21                                 int 21h
+[  53]    020F: B9 10 27                              mov cx,10000
+[  54]    0212: 5A                                    pop dx
+[  55]    0213: E8 35 00                              call View
+[  56]    0216: EB 61                                 jmp exit
+[  57]        :                                       
+[  58]    0218: B4 00                                 InputNo:    mov ah,0
+[  59]    021A: CD 16                                 int 16h ;then we will use int 16h to read a key press
+[  60]    021C: BA 00 00                              mov dx,0
+[  61]    021F: BB 01 00                              mov bx,1
+[  62]    0222: 3C 0D                                 cmp al,0dh ;the keypress will be stored in al so, we will comapre to  0d which represent the enter key, to know wheter he finished entering the number or not
+[  63]    0224: 74 0C                                 je FormNo ;if it's the enter key then this mean we already have our number stored in the stack, so we will return it back using FormNo
+[  64]    0226: 2D 30 00                              sub ax,30h ;we will subtract 30 from the the value of ax to convert the value of key press from ascii to decimal
+[  65]    0229: E8 3F 00                              call ViewNo ;then call ViewNo to view the key we pressed on the screen
+[  66]    022C: B4 00                                 mov ah,0 ;we will mov 0 to ah before we push ax to the stack bec we only need the value in al
+[  67]    022E: 50                                    push ax  ;push the contents of ax to the stack
+[  68]    022F: 41                                    inc cx   ;we will add 1 to cx as this represent the counter for the number of digit
+[  69]    0230: EB E6                                 jmp InputNo ;then we will jump back to input number to either take another number or press enter
+[  70]        :                                       
+[  71]        :                                       
+[  72]        :                                       ;we took each number separatly so we need to form our number and store in one bit for example if our number 235
+[  73]    0232: 58                                    FormNo:     pop ax; Take the last input from the stack
+[  74]    0233: 52                                    push dx
+[  75]    0234: F7 E3                                 mul bx;Here we are multiplying the value of ax with the value of bx
+[  76]    0236: 5A                                    pop dx;After multiplication we will remove it from stack
+[  77]    0237: 03 D0                                 add dx,ax;After removing from stack add the value of dx with the value of ax
+[  78]    0239: 8B C3                                 mov ax,bx;Then set the value of bx in ax
+[  79]    023B: BB 0A 00                              mov bx,10
+[  80]    023E: 52                                    push dx;push the dx value again in stack before multiplying to resist any kind of accidental effect
+[  81]    023F: F7 E3                                 mul bx;Multiply bx value by 10
+[  82]    0241: 5A                                    pop dx;pop the dx after multiplying
+[  83]    0242: 8B D8                                 mov bx,ax;Result of the multiplication is still stored in ax so we need to move it in bx
+[  84]    0244: 49                                    dec cx;After moving the value we will decrement the digit counter value
+[  85]    0245: 83 F9 00                              cmp cx,0;Check if the cx counter is 0
+[  86]    0248: 75 E8                                 jne FormNo;If the cx counter is not 0 that means we have multiple digit input and we need to run format number function again
+[  87]    024A: C3                                    ret;If the cx counter is 0 that means all of our digits are fully formatted and stored in bx we just need to return the function
+[  88]        :                                       
+[  89]        :                                       
+[  90]        :                                       
+[  91]        :                                       
+[  92]    024B: 8B C2                                 View:  mov ax,dx
+[  93]    024D: BA 00 00                              mov dx,0
+[  94]    0250: F7 F1                                 div cx
+[  95]    0252: E8 16 00                              call ViewNo
+[  96]    0255: 8B DA                                 mov bx,dx
+[  97]    0257: BA 00 00                              mov dx,0
+[  98]    025A: 8B C1                                 mov ax,cx
+[  99]    025C: B9 0A 00                              mov cx,10
+[ 100]    025F: F7 F1                                 div cx
+[ 101]    0261: 8B D3                                 mov dx,bx
+[ 102]    0263: 8B C8                                 mov cx,ax
+[ 103]    0265: 3D 00 00                              cmp ax,0
+[ 104]    0268: 75 E1                                 jne View
+[ 105]    026A: C3                                    ret
+[ 106]        :                                       
+[ 107]        :                                       
+[ 108]    026B: 50                                    ViewNo:    push ax ;we will push ax and dx to the stack because we will change there values while viewing then we will pop them back from
+[ 109]    026C: 52                                    push dx ;the stack we will do these so, we don't affect their contents
+[ 110]    026D: 8B D0                                 mov dx,ax ;we will mov the value to dx as interrupt 21h expect that the output is stored in it
+[ 111]    026F: 80 C2 30                              add dl,30h ;add 30 to its value to convert it back to ascii
+[ 112]    0272: B4 02                                 mov ah,2
+[ 113]    0274: CD 21                                 int 21h
+[ 114]    0276: 5A                                    pop dx
+[ 115]    0277: 58                                    pop ax
+[ 116]    0278: C3                                    ret
+[ 117]        :                                       
+[ 118]        :                                       
+[ 119]    0279: BA 6F 01                              exit:   mov dx,offset msg6
+[ 120]    027C: B4 09                                 mov ah, 9
+[ 121]    027E: CD 21                                 int 21h
+[ 122]        :                                       
+[ 123]        :                                       
+[ 124]    0280: B4 00                                 mov ah, 0
+[ 125]    0282: CD 16                                 int 16h
+[ 126]        :                                       
+[ 127]    0284: C3                                    ret
+[ 128]        :                                       
+[ 129]        :                                       
+[ 130]    0285: B4 09                                 Multiply:   mov ah,9
+[ 131]    0287: BA 2D 01                              mov dx, offset msg2
+[ 132]    028A: CD 21                                 int 21h
+[ 133]    028C: B9 00 00                              mov cx,0
+[ 134]    028F: E8 86 FF                              call InputNo
+[ 135]    0292: 52                                    push dx
+[ 136]    0293: B4 09                                 mov ah,9
+[ 137]    0295: BA 40 01                              mov dx, offset msg3
+[ 138]    0298: CD 21                                 int 21h
+[ 139]    029A: B9 00 00                              mov cx,0
+[ 140]    029D: E8 78 FF                              call InputNo
+[ 141]    02A0: 5B                                    pop bx
+[ 142]    02A1: 8B C2                                 mov ax,dx
+[ 143]    02A3: F7 E3                                 mul bx
+[ 144]    02A5: 8B D0                                 mov dx,ax
+[ 145]    02A7: 52                                    push dx
+[ 146]    02A8: B4 09                                 mov ah,9
+[ 147]    02AA: BA 64 01                              mov dx, offset msg5
+[ 148]    02AD: CD 21                                 int 21h
+[ 149]    02AF: B9 10 27                              mov cx,10000
+[ 150]    02B2: 5A                                    pop dx
+[ 151]    02B3: E8 95 FF                              call View
+[ 152]    02B6: EB C1                                 jmp exit
+[ 153]        :                                       
+[ 154]        :                                       
+[ 155]    02B8: B4 09                                 Subtract:   mov ah,9
+[ 156]    02BA: BA 2D 01                              mov dx, offset msg2
+[ 157]    02BD: CD 21                                 int 21h
+[ 158]    02BF: B9 00 00                              mov cx,0
+[ 159]    02C2: E8 53 FF                              call InputNo
+[ 160]    02C5: 52                                    push dx
+[ 161]    02C6: B4 09                                 mov ah,9
+[ 162]    02C8: BA 40 01                              mov dx, offset msg3
+[ 163]    02CB: CD 21                                 int 21h
+[ 164]    02CD: B9 00 00                              mov cx,0
+[ 165]    02D0: E8 45 FF                              call InputNo
+[ 166]    02D3: 5B                                    pop bx
+[ 167]    02D4: 2B DA                                 sub bx,dx
+[ 168]    02D6: 8B D3                                 mov dx,bx
+[ 169]    02D8: 52                                    push dx
+[ 170]    02D9: B4 09                                 mov ah,9
+[ 171]    02DB: BA 64 01                              mov dx, offset msg5
+[ 172]    02DE: CD 21                                 int 21h
+[ 173]    02E0: B9 10 27                              mov cx,10000
+[ 174]    02E3: 5A                                    pop dx
+[ 175]    02E4: E8 64 FF                              call View
+[ 176]    02E7: EB 90                                 jmp exit
+[ 177]        :                                       
+[ 178]        :                                       
+[ 179]    02E9: B4 09                                 Divide:     mov ah,9
+[ 180]    02EB: BA 2D 01                              mov dx, offset msg2
+[ 181]    02EE: CD 21                                 int 21h
+[ 182]    02F0: B9 00 00                              mov cx,0
+[ 183]    02F3: E8 22 FF                              call InputNo
+[ 184]    02F6: 52                                    push dx
+[ 185]    02F7: B4 09                                 mov ah,9
+[ 186]    02F9: BA 40 01                              mov dx, offset msg3
+[ 187]    02FC: CD 21                                 int 21h
+[ 188]    02FE: B9 00 00                              mov cx,0
+[ 189]    0301: E8 14 FF                              call InputNo
+[ 190]    0304: 5B                                    pop bx
+[ 191]    0305: 8B C3                                 mov ax,bx
+[ 192]    0307: 8B CA                                 mov cx,dx
+[ 193]    0309: BA 00 00                              mov dx,0
+[ 194]    030C: BB 00 00                              mov bx,0
+[ 195]    030F: F7 F1                                 div cx
+[ 196]    0311: 8B DA                                 mov bx,dx
+[ 197]    0313: 8B D0                                 mov dx,ax
+[ 198]    0315: 53                                    push bx
+[ 199]    0316: 52                                    push dx
+[ 200]    0317: B4 09                                 mov ah,9
+[ 201]    0319: BA 64 01                              mov dx, offset msg5
+[ 202]    031C: CD 21                                 int 21h
+[ 203]    031E: B9 10 27                              mov cx,10000
+[ 204]    0321: 5A                                    pop dx
+[ 205]    0322: E8 26 FF                              call View
+[ 206]    0325: 5B                                    pop bx
+[ 207]    0326: 83 FB 00                              cmp bx,0
+[ 208]    0329: 75 03 E9 4B FF                        je exit
+[ 209]    032E: E9 48 FF                              jmp exit
+[ 210]    0331: C3                                    ret
+[ 211]        :                                       
+[ 212]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

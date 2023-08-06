@@ -1,0 +1,98 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+binarysearch-5.com -- emu8086 assembler version: 4.08  
+ 
+[ 05/12/2022  --  12:30:31 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ; add your code here
+[   8]        :                                       
+[   9]    0100: EB 4B                                 .data
+[  10]        :                                       
+[  11]    0102: 00 00 11 11 22 22 33 33 44 44 55 55   arr dw 0000h,1111h,2222h,3333h,4444h,5555h,6666h,7777h,8888h,9999h
+                66 66 77 77 88 88 99 99             
+[  12]        :                                       ;arr dw 20h,11h,22h,33h,44h,5h,66h,7h,8h,99h
+[  13]    0116: 0A 00                                 len dw ($-arr)/2;middel arr
+[  14]    0118: 22 22                                 key dw 2222h ; and not found is not 2222h some 1234h
+[  15]    011A: 6B 65 79 20 69 73 20 66 6F 75 6E 64   msg1 db "key is found at "
+                20 61 74 20                         
+[  16]    012A: 20 20 70 6F 73 69 74 69 6F 6E 20 0A   res db "  position ",10,13,"$"
+                0D 24                               
+[  17]    0138: 6B 65 79 20 69 73 20 6E 6F 74 20 66   msg2 db 'key is not found!!!.$'
+                6F 75 6E 64 21 21 21 2E 24          
+[  18]    014D:                                       .code
+[  19]        :                                       
+[  20]    014D:                                       start:
+[  21]        :                                       
+[  22]    014D: 8C C8                                 mov ax,@data
+[  23]    014F: 8E D8                                 mov ds,ax
+[  24]    0151: BB 00 00                              mov bx,00
+[  25]    0154: 8B 16 16 01                           mov dx,len
+[  26]    0158: 8B 0E 18 01                           mov cx,key
+[  27]    015C:                                       again:
+[  28]        :                                       
+[  29]    015C: 3B DA                                 cmp bx,dx
+[  30]    015E: 77 2A                                 ja fail
+[  31]    0160: 8B C3                                 mov ax,bx
+[  32]    0162: 03 C2                                 add ax,dx
+[  33]    0164: D1 E8                                 shr ax,1 ;shift to right by 1
+[  34]    0166: 8B F0                                 mov si,ax
+[  35]    0168: 03 F6                                 add si,si
+[  36]    016A: 3B 8C 02 01                           cmp cx,arr[si]
+[  37]    016E: 73 05                                 jae big
+[  38]    0170: 48                                    dec ax
+[  39]    0171: 8B D0                                 mov dx,ax
+[  40]    0173: EB E7                                 jmp again
+[  41]        :                                       
+[  42]    0175:                                       big:
+[  43]        :                                       
+[  44]    0175: 74 05                                 je success
+[  45]    0177: 40                                    inc ax
+[  46]    0178: 8B D8                                 mov bx,ax
+[  47]    017A: EB E0                                 jmp again
+[  48]        :                                       
+[  49]    017C:                                       success:
+[  50]        :                                       
+[  51]    017C: 04 01                                 add al,01
+[  52]    017E: 04 30                                 add al,30h
+[  53]    0180: BE 2A 01                              lea si,res
+[  54]    0183: 88 04                                 mov [si], al
+[  55]    0185: BA 1A 01                              lea dx,msg1
+[  56]    0188: EB 03                                 jmp disp
+[  57]        :                                       
+[  58]        :                                       
+[  59]    018A:                                       fail:
+[  60]        :                                       
+[  61]    018A: BA 38 01                              lea dx,msg2
+[  62]        :                                       
+[  63]    018D:                                       disp:
+[  64]    018D: B4 09                                 mov ah,09h
+[  65]    018F: CD 21                                 int 21h
+[  66]    0191: B4 4C                                 mov ah,4ch
+[  67]    0193: CD 21                                 int 21h
+[  68]        :                                       end
+[  69]        :                                       
+[  70]        :                                       ret
+[  71]        :                                       
+[  72]        :                                       
+[  73]        :                                       
+[  74]        :                                       
+[  75]        :                                       
+[  76]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

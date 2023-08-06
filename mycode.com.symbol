@@ -1,0 +1,26 @@
+< THE SYMBOL TABLE >  mycode.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+NUMBER                   	00102     	1         	VAR       	(NOSEG)   
+MESSAGE                  	00107     	1         	VAR       	(NOSEG)   
+INPUTC                   	00117     	1         	VAR       	(NOSEG)   
+CODE                     	00126     	-1        	LABEL     	(NOSEG)   
+MAIN                     	00126     	-1        	FAR       	(NOSEG)   
+INPUT                    	00130     	-1        	LABEL     	(NOSEG)   
+BEGINSORT                	0014A     	-1        	LABEL     	(NOSEG)   
+PROCESS                  	0015A     	-1        	LABEL     	(NOSEG)   
+SWAP                     	00162     	-1        	LABEL     	(NOSEG)   
+DONTSWAP                 	0016A     	-1        	LABEL     	(NOSEG)   
+SEARCH                   	00175     	-1        	LABEL     	(NOSEG)   
+START                    	0018B     	-1        	LABEL     	(NOSEG)   
+CONTINUE                 	00197     	-1        	LABEL     	(NOSEG)   
+FOUND                    	001A9     	-1        	LABEL     	(NOSEG)   
+DOWNPART                 	001B3     	-1        	LABEL     	(NOSEG)   
+TOPPART                  	001B9     	-1        	LABEL     	(NOSEG)   
+ENDOFSEARCH              	001BF     	-1        	LABEL     	(NOSEG)   
+FINISH                   	001C5     	-1        	LABEL     	(NOSEG)   
+===================================================================================================
+[ 01/12/2022  --  08:24:28 È.Ù ] 
+< END >
+ 

@@ -1,0 +1,96 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+binarysearch-7.com -- emu8086 assembler version: 4.08  
+ 
+[ 10/12/2022  --  11:46:04 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ; add your code here
+[   8]        :                                       
+[   9]    0100: EB 54                                 .data
+[  10]        :                                       
+[  11]        :                                       ;arr dw 0000h,1111h,2222h,3333h,4444h,5555h,6666h,7777h,8888h,9999h And use line 60 in 31h
+[  12]        :                                       
+[  13]    0102: 00 00 01 00 02 00 03 00 04 00 05 00   arr dw 0,1,2,3,4,5,6,7,8,9 ;create array
+                06 00 07 00 08 00 09 00             
+[  14]        :                                       ;arr dw 0,1,20,34,42,57,62,74,88,90  ;create array
+[  15]    0116: 0A 00                                 len dw 10 ; dw is 16 bit and dx is 16 bit
+[  16]        :                                       ;($-arr)/2 ;is len array and use it ;middel arr
+[  17]    0118: 04 00                                 key dw 4 ;and not found is not 2h some 14h
+[  18]    011A: 6B 65 79 20 69 73 20 66 6F 75 6E 64   msg1 db "key is found at "
+                20 61 74 20                         
+[  19]    012A: 20 20 70 6F 73 69 74 69 6F 6E 20 69   res db "  position in array ",10,13,"$"
+                6E 20 61 72 72 61 79 20 0A 0D 24    
+[  20]    0141: 6B 65 79 20 69 73 20 6E 6F 74 20 66   msg2 db 'key is not found!!!.$'
+                6F 75 6E 64 21 21 21 2E 24          
+[  21]        :                                       
+[  22]    0156:                                       .code
+[  23]        :                                       
+[  24]    0156: 8C C8                                 mov ax,@data
+[  25]    0158: 8E D8                                 mov ds,ax
+[  26]    015A: BB 00 00                              mov bx,0
+[  27]    015D: 8B 16 16 01                           mov dx,len
+[  28]    0161: 8B 0E 18 01                           mov cx,key
+[  29]        :                                       
+[  30]    0165:                                       again:
+[  31]        :                                       
+[  32]    0165: 3B DA                                 cmp bx,dx
+[  33]    0167: 77 2A                                 ja fail
+[  34]    0169: 8B C3                                 mov ax,bx
+[  35]    016B: 03 C2                                 add ax,dx ; ax = 10(len)
+[  36]    016D: D1 E8                                 shr ax,1 ;shift to right by 1
+[  37]    016F: 8B F0                                 mov si,ax
+[  38]    0171: 03 F6                                 add si,si
+[  39]    0173: 3B 8C 02 01                           cmp cx,arr[si]
+[  40]    0177: 73 05                                 jnb big ; jae big is some jea and means cx >= arr[si]
+[  41]    0179: 48                                    dec ax
+[  42]    017A: 8B D0                                 mov dx,ax
+[  43]    017C: EB E7                                 jmp again
+[  44]        :                                       
+[  45]    017E:                                       big:
+[  46]        :                                       
+[  47]    017E: 74 05                                 je success    ; equal
+[  48]    0180: 40                                    inc ax
+[  49]    0181: 8B D8                                 mov bx,ax
+[  50]    0183: EB E0                                 jmp again
+[  51]        :                                       
+[  52]    0185:                                       success:
+[  53]        :                                       
+[  54]    0185: 04 01                                 add al,01
+[  55]    0187: 04 30                                 add al,'0';becuse a good print if not use a '0' and bad print
+[  56]    0189: BE 2A 01                              lea si,res
+[  57]    018C: 88 04                                 mov [si], al
+[  58]    018E: BA 1A 01                              lea dx,msg1
+[  59]    0191: EB 03                                 jmp disp
+[  60]        :                                       
+[  61]    0193:                                       fail:
+[  62]        :                                       
+[  63]    0193: BA 41 01                              lea dx,msg2
+[  64]        :                                       
+[  65]    0196:                                       disp:
+[  66]        :                                       
+[  67]        :                                       ; print
+[  68]    0196: B8 00 09                              mov ax,0900h ; and can use mov ah,09h
+[  69]    0199: CD 21                                 int 21h
+[  70]        :                                       ; end
+[  71]    019B: B8 00 4C                              mov ax,4c00h ; and can use mov ah,4ch
+[  72]    019E: CD 21                                 int 21h
+[  73]        :                                       end main
+[  74]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

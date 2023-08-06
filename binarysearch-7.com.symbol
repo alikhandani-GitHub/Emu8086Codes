@@ -1,0 +1,20 @@
+< THE SYMBOL TABLE >  binarysearch-7.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+ARR                      	00102     	2         	VAR       	(NOSEG)   
+LEN                      	00116     	2         	VAR       	(NOSEG)   
+KEY                      	00118     	2         	VAR       	(NOSEG)   
+MSG1                     	0011A     	1         	VAR       	(NOSEG)   
+RES                      	0012A     	1         	VAR       	(NOSEG)   
+MSG2                     	00141     	1         	VAR       	(NOSEG)   
+CODE                     	00156     	-1        	LABEL     	(NOSEG)   
+AGAIN                    	00165     	-1        	LABEL     	(NOSEG)   
+BIG                      	0017E     	-1        	LABEL     	(NOSEG)   
+SUCCESS                  	00185     	-1        	LABEL     	(NOSEG)   
+FAIL                     	00193     	-1        	LABEL     	(NOSEG)   
+DISP                     	00196     	-1        	LABEL     	(NOSEG)   
+===================================================================================================
+[ 10/12/2022  --  11:46:04 È.Ù ] 
+< END >
+ 

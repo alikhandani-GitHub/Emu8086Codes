@@ -1,0 +1,733 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+Game-6.com -- emu8086 assembler version: 4.08  
+ 
+[ 11/01/2023  --  07:06:02 È.Ù ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       ;*******************************************************************************************************************
+[   8]        :                                       ;                                              Snake Game By                                                       *
+[   9]        :                                       ;                                                 HERO-DAI                                                         *
+[  10]        :                                       ;*******************************************************************************************************************
+[  11]        :                                       
+[  12]        :                                       ;code is not well-commented, sorry about that, I'll try to comment it nice and well, but can't make any
+[  13]        :                                       ;promises, Also, this code writes directly into the video memory instead of int 21H (21H is slow) except
+[  14]        :                                       ;at some certain points (like displaying scores and the intro)
+[  15]        :                                       
+[  16]        :                                       ;and next time someone tells you to not use goto, ask them to code in assembly without goto... :P
+[  17]        :                                       
+[  18]        :                                       left equ 0
+[  19]        :                                       top equ 2
+[  20]        :                                       row equ 15
+[  21]        :                                       col equ 40
+[  22]        :                                       right equ left+col
+[  23]        :                                       bottom equ top+row
+[  24]        :                                       
+[  25]        :                                       .model small
+[  26]    0100: E9 03 02                              .data
+[  27]    0103: 57 65 6C 63 6F 6D 65 20 74 6F 20 74   msg db "Welcome to the snake game!!",0
+                68 65 20 73 6E 61 6B 65 20 67 61 6D 
+                65 21 21 00                         
+[  28]    011F: 0A 0D 55 73 65 20 61 2C 20 73 2C 20   instructions db 0AH,0DH,"Use a, s, d, w to find (f) to control your snake",0AH,0DH,"Use q anytime to quit",0DH,0AH, "Press any key to continue$"
+                64 2C 20 77 20 74 6F 20 66 69 6E 64 
+                20 28 66 29 20 74 6F 20 63 6F 6E 74 
+                72 6F 6C 20 79 6F 75 72 20 73 6E 61 
+                6B 65 0A 0D 55 73 65 20 71 20 61 6E 
+                79 74 69 6D 65 20 74 6F 20 71 75 69 
+                74 0D 0A 50 72 65 73 73 20 61 6E 79 
+                20 6B 65 79 20 74 6F 20 63 6F 6E 74 
+                69 6E 75 65 24                      
+[  29]    0184: 54 68 61 6E 6B 73 20 66 6F 72 20 70   quitmsg db "Thanks for playing! hope you enjoyed",0
+                6C 61 79 69 6E 67 21 20 68 6F 70 65 
+                20 79 6F 75 20 65 6E 6A 6F 79 65 64 
+                00                                  
+[  30]    01A9: 4F 4F 50 53 21 21 20 79 6F 75 72 20   gameovermsg db "OOPS!! your snake died! :P ", 0
+                73 6E 61 6B 65 20 64 69 65 64 21 3A 
+                50 20 00                            
+[  31]    01C4: 53 63 6F 72 65 3A 20 00               scoremsg db "Score: ",0
+[  32]    01CC: 5E 0A 0A                              head db '^',10,10
+[  33]    01CF: 2A 0A 0B 00 00 00 00 00 00 00 00 00   body db '*',10,11, 3*15 DUP(0)
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                                                    
+[  34]    01FF: 01                                    segmentcount db 1
+[  35]    0200: 01                                    fruitactive db 1
+[  36]    0201: 08                                    fruitx db 8
+[  37]    0202: 08                                    fruity db 8
+[  38]    0203: 00                                    gameover db 0
+[  39]    0204: 00                                    quit db 0
+[  40]    0205: 05                                    delaytime db 5
+[  41]        :                                       
+[  42]        :                                       
+[  43]        :                                       .stack
+[  44]    0206: 00 00 00 00 00 00 00 00 00 00 00 00   dw   128  dup(0)
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00                         
+[  45]        :                                       
+[  46]        :                                       
+[  47]    0306:                                       .code
+[  48]        :                                       
+[  49]    0306:                                       main proc far
+[  50]    0306: 8C C8                                 	mov ax, @data
+[  51]    0308: 8E D8                                 	mov ds, ax
+[  52]        :                                       	
+[  53]    030A: B8 00 B8                              	mov ax, 0b800H
+[  54]    030D: 8E C0                                 	mov es, ax
+[  55]        :                                       	
+[  56]        :                                       	;clearing the screen
+[  57]    030F: B8 03 00                              	mov ax, 0003H
+[  58]    0312: CD 10                                 	int 10H
+[  59]        :                                       	
+[  60]    0314: BB 03 01                              	lea bx, msg
+[  61]    0317: BA 00 00                              	mov dx,00
+[  62]    031A: E8 08 03                              	call writestringat
+[  63]        :                                       	
+[  64]    031D: BA 1F 01                              	lea dx, instructions
+[  65]    0320: B4 09                                 	mov ah, 09H
+[  66]    0322: CD 21                                 	int 21h
+[  67]        :                                       	
+[  68]    0324: B4 07                                 	mov ah, 07h
+[  69]    0326: CD 21                                 	int 21h
+[  70]    0328: B8 03 00                              	mov ax, 0003H
+[  71]    032B: CD 10                                 	int 10H
+[  72]    032D: E8 70 02                              call printbox
+[  73]        :                                       
+[  74]        :                                       
+[  75]    0330:                                       mainloop:
+[  76]    0330: E8 5F 00                              call delay
+[  77]    0333: BB 03 01                              lea bx, msg
+[  78]    0336: BA 00 00                              mov dx, 00
+[  79]    0339: E8 E9 02                              call writestringat
+[  80]    033C: E8 B7 01                              call shiftsnake
+[  81]    033F: 80 3E 03 02 01                        cmp gameover,1
+[  82]    0344: 74 12                                 je gameover_mainloop
+[  83]        :                                       
+[  84]    0346: E8 53 01                              call keyboardfunctions
+[  85]    0349: 80 3E 04 02 01                        cmp quit, 1
+[  86]    034E: 74 20                                 je quitpressed_mainloop
+[  87]    0350: E8 50 00                              call fruitgeneration
+[  88]    0353: E8 F4 00                              call draw
+[  89]        :                                       
+[  90]        :                                       ;TODO: check gameover and quit
+[  91]        :                                       
+[  92]    0356: EB D8                                 jmp mainloop
+[  93]        :                                       
+[  94]    0358:                                       gameover_mainloop:
+[  95]    0358: B8 03 00                              mov ax, 0003H
+[  96]    035B: CD 10                                 	int 10H
+[  97]    035D: C6 06 05 02 64                        mov delaytime, 100
+[  98]    0362: BA 00 00                              mov dx, 0000H
+[  99]    0365: BB A9 01                              lea bx, gameovermsg
+[ 100]    0368: E8 BA 02                              call writestringat
+[ 101]    036B: E8 24 00                              call delay
+[ 102]    036E: EB 18                                 jmp quit_mainloop
+[ 103]        :                                       
+[ 104]    0370:                                       quitpressed_mainloop:
+[ 105]    0370: B8 03 00                              mov ax, 0003H
+[ 106]    0373: CD 10                                 	int 10H
+[ 107]    0375: C6 06 05 02 64                        mov delaytime, 100
+[ 108]    037A: BA 00 00                              mov dx, 0000H
+[ 109]    037D: BB 84 01                              lea bx, quitmsg
+[ 110]    0380: E8 A2 02                              call writestringat
+[ 111]    0383: E8 0C 00                              call delay
+[ 112]    0386: EB 00                                 jmp quit_mainloop
+[ 113]        :                                       
+[ 114]        :                                       
+[ 115]        :                                       
+[ 116]        :                                       
+[ 117]    0388:                                       quit_mainloop:
+[ 118]        :                                       ;first clear screen
+[ 119]    0388: B8 03 00                              mov ax, 0003H
+[ 120]    038B: CD 10                                 int 10h
+[ 121]    038D: B8 00 4C                              mov ax, 4c00h
+[ 122]    0390: CD 21                                 int 21h
+[ 123]        :                                       
+[ 124]        :                                       
+[ 125]        :                                       
+[ 126]        :                                       
+[ 127]        :                                       
+[ 128]        :                                       
+[ 129]    0392:                                       delay proc
+[ 130]        :                                       
+[ 131]        :                                       ;this procedure uses 1A interrupt, more info can be found on
+[ 132]        :                                       ;http://www.computing.dcu.ie/~ray/teaching/CA296/notes/8086_bios_and_dos_interrupts.html
+[ 133]    0392: B4 00                                 mov ah, 00
+[ 134]    0394: CD 1A                                 int 1Ah
+[ 135]    0396: 8B DA                                 mov bx, dx
+[ 136]        :                                       
+[ 137]    0398:                                       jmp_delay:
+[ 138]    0398: CD 1A                                 int 1Ah
+[ 139]    039A: 2B D3                                 sub dx, bx
+[ 140]        :                                       ;there are about 18 ticks in a second, 10 ticks are about enough
+[ 141]    039C: 3A 16 05 02                           cmp dl, delaytime
+[ 142]    03A0: 7C F6                                 jl jmp_delay
+[ 143]    03A2: C3                                    ret
+[ 144]        :                                       
+[ 145]        :                                       delay endp
+[ 146]        :                                       
+[ 147]        :                                       
+[ 148]        :                                       
+[ 149]        :                                       
+[ 150]    03A3:                                       fruitgeneration proc
+[ 151]    03A3: 8A 2E 02 02                           mov ch, fruity
+[ 152]    03A7: 8A 0E 01 02                           mov cl, fruitx
+[ 153]    03AB:                                       regenerate:
+[ 154]        :                                       
+[ 155]    03AB: 80 3E 00 02 01                        cmp fruitactive, 1
+[ 156]    03B0: 74 6F                                 je ret_fruitactive
+[ 157]    03B2: B4 00                                 mov ah, 00
+[ 158]    03B4: CD 1A                                 int 1Ah
+[ 159]        :                                       ;dx contains the ticks
+[ 160]    03B6: 52                                    push dx
+[ 161]    03B7: 8B C2                                 mov ax, dx
+[ 162]    03B9: 33 D2                                 xor dx, dx
+[ 163]    03BB: 32 FF                                 xor bh, bh
+[ 164]    03BD: B3 0F                                 mov bl, row
+[ 165]    03BF: FE CB                                 dec bl
+[ 166]    03C1: F7 F3                                 div bx
+[ 167]    03C3: 88 16 02 02                           mov fruity, dl
+[ 168]    03C7: FE 06 02 02                           inc fruity
+[ 169]        :                                       
+[ 170]        :                                       
+[ 171]    03CB: 58                                    pop ax
+[ 172]    03CC: B3 28                                 mov bl, col
+[ 173]    03CE: FE CA                                 dec dl
+[ 174]    03D0: 32 FF                                 xor bh, bh
+[ 175]    03D2: 33 D2                                 xor dx, dx
+[ 176]    03D4: F7 F3                                 div bx
+[ 177]    03D6: 88 16 01 02                           mov fruitx, dl
+[ 178]    03DA: FE 06 01 02                           inc fruitx
+[ 179]        :                                       
+[ 180]    03DE: 38 0E 01 02                           cmp fruitx, cl
+[ 181]    03E2: 75 08                                 jne nevermind
+[ 182]    03E4: 38 2E 02 02                           cmp fruity, ch
+[ 183]    03E8: 75 02                                 jne nevermind
+[ 184]    03EA: EB BF                                 jmp regenerate
+[ 185]    03EC:                                       nevermind:
+[ 186]    03EC: A0 01 02                              mov al, fruitx
+[ 187]    03EF: D0 C8                                 ror al,1
+[ 188]    03F1: 72 B8                                 jc regenerate
+[ 189]        :                                       
+[ 190]        :                                       
+[ 191]    03F3: 80 06 02 02 02                        add fruity, top
+[ 192]    03F8: 80 06 01 02 00                        add fruitx, left
+[ 193]        :                                       
+[ 194]    03FD: 8A 36 02 02                           mov dh, fruity
+[ 195]    0401: 8A 16 01 02                           mov dl, fruitx
+[ 196]    0405: E8 F2 01                              call readcharat
+[ 197]    0408: 80 FB 2A                              cmp bl, '*'
+[ 198]    040B: 74 9E                                 je regenerate
+[ 199]    040D: 80 FB 5E                              cmp bl, '^'
+[ 200]    0410: 74 99                                 je regenerate
+[ 201]    0412: 80 FB 3C                              cmp bl, '<'
+[ 202]    0415: 74 94                                 je regenerate
+[ 203]    0417: 80 FB 3E                              cmp bl, '>'
+[ 204]    041A: 74 8F                                 je regenerate
+[ 205]    041C: 80 FB 76                              cmp bl, 'v'
+[ 206]    041F: 74 8A                                 je regenerate
+[ 207]        :                                       
+[ 208]    0421:                                       ret_fruitactive:
+[ 209]    0421: C3                                    ret
+[ 210]        :                                       fruitgeneration endp
+[ 211]        :                                       
+[ 212]        :                                       
+[ 213]    0422:                                       dispdigit proc
+[ 214]    0422: 80 C2 30                              add dl, '0'
+[ 215]    0425: B4 02                                 mov ah, 02H
+[ 216]    0427: CD 21                                 int 21H
+[ 217]    0429: C3                                    ret
+[ 218]        :                                       dispdigit endp
+[ 219]        :                                       
+[ 220]    042A:                                       dispnum proc
+[ 221]    042A: 85 C0                                 test ax,ax
+[ 222]    042C: 74 10                                 jz retz
+[ 223]    042E: 33 D2                                 xor dx, dx
+[ 224]        :                                       ;ax contains the number to be displayed
+[ 225]        :                                       ;bx must contain 10
+[ 226]    0430: BB 0A 00                              mov bx,10
+[ 227]    0433: F7 F3                                 div bx
+[ 228]        :                                       ;dispnum ax first.
+[ 229]    0435: 52                                    push dx
+[ 230]    0436: E8 F1 FF                              call dispnum
+[ 231]    0439: 5A                                    pop dx
+[ 232]    043A: E8 E5 FF                              call dispdigit
+[ 233]    043D: C3                                    ret
+[ 234]    043E:                                       retz:
+[ 235]    043E: B4 02                                 mov ah, 02
+[ 236]    0440: C3                                    ret
+[ 237]        :                                       dispnum endp
+[ 238]        :                                       
+[ 239]        :                                       
+[ 240]        :                                       
+[ 241]        :                                       ;sets the cursor position, ax and bx used, dh=row, dl = column
+[ 242]        :                                       ;preserves other registers
+[ 243]    0441:                                       setcursorpos proc
+[ 244]    0441: B4 02                                 mov ah, 02H
+[ 245]    0443: 53                                    push bx
+[ 246]    0444: B7 00                                 mov bh,0
+[ 247]    0446: CD 10                                 int 10h
+[ 248]    0448: 5B                                    pop bx
+[ 249]    0449: C3                                    ret
+[ 250]        :                                       setcursorpos endp
+[ 251]        :                                       
+[ 252]        :                                       
+[ 253]        :                                       
+[ 254]    044A:                                       draw proc
+[ 255]    044A: BB C4 01                              lea bx, scoremsg
+[ 256]    044D: BA 6D 00                              mov dx, 0109
+[ 257]    0450: E8 D2 01                              call writestringat
+[ 258]        :                                       
+[ 259]        :                                       
+[ 260]    0453: 83 C2 07                              add dx, 7
+[ 261]    0456: E8 E8 FF                              call setcursorpos
+[ 262]    0459: A0 FF 01                              mov al, segmentcount
+[ 263]    045C: FE C8                                 dec al
+[ 264]    045E: 32 E4                                 xor ah, ah
+[ 265]    0460: E8 C7 FF                              call dispnum
+[ 266]        :                                       
+[ 267]    0463: BE CC 01                              lea si, head
+[ 268]    0466:                                       draw_loop:
+[ 269]    0466: 3E 8A 1C                              mov bl, ds:[si]
+[ 270]    0469: 84 DB                                 test bl, bl
+[ 271]    046B: 74 0C                                 jz out_draw
+[ 272]    046D: 3E 8B 54 01                           mov dx, ds:[si+1]
+[ 273]    0471: E8 5B 01                              call writecharat
+[ 274]    0474: 83 C6 03                              add si,3
+[ 275]    0477: EB ED                                 jmp draw_loop
+[ 276]        :                                       
+[ 277]    0479:                                       out_draw:
+[ 278]    0479: B3 46                                 mov bl, 'F'
+[ 279]    047B: 8A 36 02 02                           mov dh, fruity
+[ 280]    047F: 8A 16 01 02                           mov dl, fruitx
+[ 281]    0483: E8 49 01                              call writecharat
+[ 282]    0486: C6 06 00 02 01                        mov fruitactive, 1
+[ 283]        :                                       
+[ 284]    048B: C3                                    ret
+[ 285]        :                                       
+[ 286]        :                                       
+[ 287]        :                                       
+[ 288]        :                                       draw endp
+[ 289]        :                                       
+[ 290]        :                                       
+[ 291]        :                                       
+[ 292]        :                                       ;dl contains the ascii character if keypressed, else dl contains 0
+[ 293]        :                                       ;uses dx and ax, preserves other registers
+[ 294]    048C:                                       readchar proc
+[ 295]    048C: B4 01                                 mov ah, 01H
+[ 296]    048E: CD 16                                 int 16H
+[ 297]    0490: 75 03                                 jnz keybdpressed
+[ 298]    0492: 32 D2                                 xor dl, dl
+[ 299]    0494: C3                                    ret
+[ 300]    0495:                                       keybdpressed:
+[ 301]        :                                       ;extract the keystroke from the buffer
+[ 302]    0495: B4 00                                 mov ah, 00H
+[ 303]    0497: CD 16                                 int 16H
+[ 304]    0499: 8A D0                                 mov dl,al
+[ 305]    049B: C3                                    ret
+[ 306]        :                                       
+[ 307]        :                                       
+[ 308]        :                                       readchar endp
+[ 309]        :                                       
+[ 310]        :                                       
+[ 311]        :                                       
+[ 312]        :                                       
+[ 313]        :                                       
+[ 314]        :                                       
+[ 315]        :                                       
+[ 316]    049C:                                       keyboardfunctions proc
+[ 317]        :                                       
+[ 318]    049C: E8 ED FF                              call readchar
+[ 319]    049F: 80 FA 00                              cmp dl, 0
+[ 320]    04A2: 74 47                                 je next_14
+[ 321]        :                                       
+[ 322]        :                                       ;so a key was pressed, which key was pressed then solti?
+[ 323]    04A4: 80 FA 77                              cmp dl, 'w'
+[ 324]    04A7: 75 0D                                 jne next_11
+[ 325]    04A9: 80 3E CC 01 76                        cmp head, 'v'
+[ 326]    04AE: 74 3B                                 je next_14
+[ 327]    04B0: C6 06 CC 01 5E                        mov head, '^'
+[ 328]    04B5: C3                                    ret
+[ 329]    04B6:                                       next_11:
+[ 330]    04B6: 80 FA 73                              cmp dl, 's'
+[ 331]    04B9: 75 0D                                 jne next_12
+[ 332]    04BB: 80 3E CC 01 5E                        cmp head, '^'
+[ 333]    04C0: 74 29                                 je next_14
+[ 334]    04C2: C6 06 CC 01 76                        mov head, 'v'
+[ 335]    04C7: C3                                    ret
+[ 336]    04C8:                                       next_12:
+[ 337]    04C8: 80 FA 61                              cmp dl, 'a'
+[ 338]    04CB: 75 0D                                 jne next_13
+[ 339]    04CD: 80 3E CC 01 3E                        cmp head, '>'
+[ 340]    04D2: 74 17                                 je next_14
+[ 341]    04D4: C6 06 CC 01 3C                        mov head, '<'
+[ 342]    04D9: C3                                    ret
+[ 343]    04DA:                                       next_13:
+[ 344]    04DA: 80 FA 64                              cmp dl, 'd'
+[ 345]    04DD: 75 0C                                 jne next_14
+[ 346]    04DF: 80 3E CC 01 3C                        cmp head, '<'
+[ 347]    04E4: 74 05                                 je next_14
+[ 348]    04E6: C6 06 CC 01 3E                        mov head,'>'
+[ 349]    04EB:                                       next_14:
+[ 350]    04EB: 80 FA 71                              cmp dl, 'q'
+[ 351]    04EE: 74 01                                 je quit_keyboardfunctions
+[ 352]    04F0: C3                                    ret
+[ 353]    04F1:                                       quit_keyboardfunctions:
+[ 354]        :                                       ;conditions for quitting in here please
+[ 355]    04F1: FE 06 04 02                           inc quit
+[ 356]    04F5: C3                                    ret
+[ 357]        :                                       
+[ 358]        :                                       keyboardfunctions endp
+[ 359]        :                                       
+[ 360]        :                                       
+[ 361]        :                                       
+[ 362]        :                                       
+[ 363]        :                                       
+[ 364]        :                                       
+[ 365]        :                                       
+[ 366]        :                                       
+[ 367]    04F6:                                       shiftsnake proc
+[ 368]    04F6: BB CC 01                              mov bx, offset head
+[ 369]        :                                       
+[ 370]        :                                       ;determine the where should the head go solti?
+[ 371]        :                                       ;preserve the head
+[ 372]    04F9: 33 C0                                 xor ax, ax
+[ 373]    04FB: 8A 07                                 mov al, [bx]
+[ 374]    04FD: 50                                    push ax
+[ 375]    04FE: 43                                    inc bx
+[ 376]    04FF: 8B 07                                 mov ax, [bx]
+[ 377]    0501: 43                                    inc bx
+[ 378]    0502: 43                                    inc bx
+[ 379]    0503: 33 C9                                 xor cx, cx
+[ 380]    0505:                                       l:
+[ 381]    0505: 8B 37                                 mov si, [bx]
+[ 382]    0507: 85 37                                 test si, [bx]
+[ 383]    0509: 74 0C                                 jz outside
+[ 384]    050B: 41                                    inc cx
+[ 385]    050C: 43                                    inc bx
+[ 386]    050D: 8B 17                                 mov dx,[bx]
+[ 387]    050F: 89 07                                 mov [bx], ax
+[ 388]    0511: 8B C2                                 mov ax,dx
+[ 389]    0513: 43                                    inc bx
+[ 390]    0514: 43                                    inc bx
+[ 391]    0515: EB EE                                 jmp l
+[ 392]        :                                       
+[ 393]    0517:                                       outside:
+[ 394]        :                                       
+[ 395]        :                                       
+[ 396]        :                                       ;hopefully, the snake will be shifted, i.e. moved.
+[ 397]        :                                       ;now shift the head in its proper direction and then clear the last segment.
+[ 398]        :                                       ;But don't clear the last segment if the snake has eaten the fruit
+[ 399]    0517: 58                                    pop ax
+[ 400]        :                                       ;al contains the snake head direction
+[ 401]        :                                       
+[ 402]    0518: 52                                    push dx
+[ 403]        :                                       ;dx now consists the coordinates of the last segment, we can use this to clear it
+[ 404]        :                                       
+[ 405]        :                                       
+[ 406]    0519: BB CC 01                              lea bx, head
+[ 407]    051C: 43                                    inc bx
+[ 408]    051D: 8B 17                                 mov dx, [bx]
+[ 409]        :                                       
+[ 410]    051F: 3C 3C                                 cmp al, '<'
+[ 411]    0521: 75 06                                 jne next_1
+[ 412]    0523: FE CA                                 dec dl
+[ 413]    0525: FE CA                                 dec dl
+[ 414]    0527: EB 14                                 jmp done_checking_the_head
+[ 415]    0529:                                       next_1:
+[ 416]    0529: 3C 3E                                 cmp al, '>'
+[ 417]    052B: 75 06                                 jne next_2
+[ 418]    052D: FE C2                                 inc dl
+[ 419]    052F: FE C2                                 inc dl
+[ 420]    0531: EB 0A                                 jmp done_checking_the_head
+[ 421]        :                                       
+[ 422]    0533:                                       next_2:
+[ 423]    0533: 3C 5E                                 cmp al, '^'
+[ 424]    0535: 75 04                                 jne next_3
+[ 425]    0537: FE CE                                 dec dh
+[ 426]        :                                       
+[ 427]        :                                       
+[ 428]    0539: EB 02                                 jmp done_checking_the_head
+[ 429]        :                                       
+[ 430]    053B:                                       next_3:
+[ 431]        :                                       ;must be 'v'
+[ 432]    053B: FE C6                                 inc dh
+[ 433]        :                                       
+[ 434]    053D:                                       done_checking_the_head:
+[ 435]    053D: 89 17                                 mov [bx],dx
+[ 436]        :                                       ;dx contains the new position of the head, now check whats in that position
+[ 437]    053F: E8 B8 00                              call readcharat ;dx
+[ 438]        :                                       ;bl contains the result
+[ 439]        :                                       
+[ 440]    0542: 80 FB 46                              cmp bl, 'F'
+[ 441]    0545: 74 2B                                 je i_ate_fruit
+[ 442]        :                                       
+[ 443]        :                                       ;if fruit was not eaten, then clear the last segment,
+[ 444]        :                                       ;it will be cleared where?
+[ 445]    0547: 8B CA                                 mov cx, dx
+[ 446]    0549: 5A                                    pop dx
+[ 447]    054A: 80 FB 2A                              cmp bl, '*'    ;the snake bit itself, gameover
+[ 448]    054D: 74 1E                                 je game_over
+[ 449]    054F: B3 00                                 mov bl, 0
+[ 450]    0551: E8 7B 00                              call writecharat
+[ 451]    0554: 8B D1                                 mov dx, cx
+[ 452]        :                                       
+[ 453]        :                                       
+[ 454]        :                                       
+[ 455]        :                                       
+[ 456]        :                                       
+[ 457]        :                                       ;check whether the snake is within the boundary
+[ 458]    0556: 80 FE 02                              cmp dh, top
+[ 459]    0559: 74 12                                 je game_over
+[ 460]    055B: 3A 36 11 00                           cmp dh, bottom
+[ 461]    055F: 74 0C                                 je game_over
+[ 462]    0561: 80 FA 00                              cmp dl,left
+[ 463]    0564: 74 07                                 je game_over
+[ 464]    0566: 3A 16 28 00                           cmp dl, right
+[ 465]    056A: 74 01                                 je game_over
+[ 466]        :                                       
+[ 467]        :                                       
+[ 468]        :                                       
+[ 469]        :                                       ;balance the stack, number of segment and the coordinate of the last segment
+[ 470]        :                                       
+[ 471]    056C: C3                                    ret
+[ 472]    056D:                                       game_over:
+[ 473]    056D: FE 06 03 02                           inc gameover
+[ 474]    0571: C3                                    ret
+[ 475]    0572:                                       i_ate_fruit:
+[ 476]        :                                       
+[ 477]        :                                       ; add a new segment then
+[ 478]    0572: A0 FF 01                              mov al, segmentcount
+[ 479]    0575: 32 E4                                 xor ah, ah
+[ 480]        :                                       
+[ 481]        :                                       
+[ 482]    0577: BB CF 01                              lea bx, body
+[ 483]    057A: B9 03 00                              mov cx, 3
+[ 484]    057D: F7 E1                                 mul cx
+[ 485]        :                                       
+[ 486]    057F: 5A                                    pop dx
+[ 487]    0580: 03 D8                                 add bx, ax
+[ 488]    0582: 3E C6 07 2A                           mov byte ptr ds:[bx], '*'
+[ 489]    0586: 89 57 01                              mov [bx+1], dx
+[ 490]    0589: FE 06 FF 01                           inc segmentcount
+[ 491]    058D: 8A 36 02 02                           mov dh, fruity
+[ 492]    0591: 8A 16 01 02                           mov dl, fruitx
+[ 493]    0595: B3 00                                 mov bl, 0
+[ 494]    0597: E8 35 00                              call writecharat
+[ 495]    059A: C6 06 00 02 00                        mov fruitactive, 0
+[ 496]    059F: C3                                    ret
+[ 497]        :                                       shiftsnake endp
+[ 498]        :                                       
+[ 499]        :                                       
+[ 500]        :                                       
+[ 501]        :                                       
+[ 502]        :                                       
+[ 503]        :                                       
+[ 504]        :                                       
+[ 505]        :                                       
+[ 506]        :                                       
+[ 507]        :                                       
+[ 508]        :                                       
+[ 509]        :                                       
+[ 510]        :                                       
+[ 511]        :                                       ;Printbox
+[ 512]    05A0:                                       printbox proc
+[ 513]        :                                       ;Draw a box around
+[ 514]    05A0: B6 02                                 mov dh, top
+[ 515]    05A2: B2 00                                 mov dl, left
+[ 516]    05A4: B9 28 00                              mov cx, col
+[ 517]    05A7: B3 2A                                 mov bl, '*'
+[ 518]    05A9:                                       l1:
+[ 519]    05A9: E8 23 00                              call writecharat
+[ 520]    05AC: FE C2                                 inc dl
+[ 521]    05AE: E2 F9                                 loop l1
+[ 522]        :                                       
+[ 523]    05B0: B9 0F 00                              mov cx, row
+[ 524]    05B3:                                       l2:
+[ 525]    05B3: E8 19 00                              call writecharat
+[ 526]    05B6: FE C6                                 inc dh
+[ 527]    05B8: E2 F9                                 loop l2
+[ 528]        :                                       
+[ 529]    05BA: B9 28 00                              mov cx, col
+[ 530]    05BD:                                       l3:
+[ 531]    05BD: E8 0F 00                              call writecharat
+[ 532]    05C0: FE CA                                 dec dl
+[ 533]    05C2: E2 F9                                 loop l3
+[ 534]        :                                       
+[ 535]    05C4: B9 0F 00                              mov cx, row
+[ 536]    05C7:                                       l4:
+[ 537]    05C7: E8 05 00                              call writecharat
+[ 538]    05CA: FE CE                                 dec dh
+[ 539]    05CC: E2 F9                                 loop l4
+[ 540]        :                                       
+[ 541]    05CE: C3                                    ret
+[ 542]        :                                       printbox endp
+[ 543]        :                                       
+[ 544]        :                                       
+[ 545]        :                                       
+[ 546]        :                                       
+[ 547]        :                                       
+[ 548]        :                                       
+[ 549]        :                                       
+[ 550]        :                                       
+[ 551]        :                                       
+[ 552]        :                                       ;dx contains row, col
+[ 553]        :                                       ;bl contains the character to write
+[ 554]        :                                       ;uses di.
+[ 555]    05CF:                                       writecharat proc
+[ 556]        :                                       ;80x25
+[ 557]    05CF: 52                                    push dx
+[ 558]    05D0: 8B C2                                 mov ax, dx
+[ 559]    05D2: 25 00 FF                              and ax, 0FF00H
+[ 560]    05D5: D1 E8                                 shr ax,1
+[ 561]    05D7: D1 E8                                 shr ax,1
+[ 562]    05D9: D1 E8                                 shr ax,1
+[ 563]    05DB: D1 E8                                 shr ax,1
+[ 564]    05DD: D1 E8                                 shr ax,1
+[ 565]    05DF: D1 E8                                 shr ax,1
+[ 566]    05E1: D1 E8                                 shr ax,1
+[ 567]    05E3: D1 E8                                 shr ax,1
+[ 568]        :                                       
+[ 569]        :                                       
+[ 570]    05E5: 53                                    push bx
+[ 571]    05E6: B7 A0                                 mov bh, 160
+[ 572]    05E8: F6 E7                                 mul bh
+[ 573]    05EA: 5B                                    pop bx
+[ 574]    05EB: 81 E2 FF 00                           and dx, 0FFH
+[ 575]    05EF: D1 E2                                 shl dx,1
+[ 576]    05F1: 03 C2                                 add ax, dx
+[ 577]    05F3: 8B F8                                 mov di, ax
+[ 578]    05F5: 26 88 1D                              mov es:[di], bl
+[ 579]    05F8: 5A                                    pop dx
+[ 580]    05F9: C3                                    ret
+[ 581]        :                                       writecharat endp
+[ 582]        :                                       
+[ 583]        :                                       
+[ 584]        :                                       
+[ 585]        :                                       
+[ 586]        :                                       
+[ 587]        :                                       
+[ 588]        :                                       
+[ 589]        :                                       
+[ 590]        :                                       
+[ 591]        :                                       ;dx contains row,col
+[ 592]        :                                       ;returns the character at bl
+[ 593]        :                                       ;uses di
+[ 594]    05FA:                                       readcharat proc
+[ 595]    05FA: 52                                    push dx
+[ 596]    05FB: 8B C2                                 mov ax, dx
+[ 597]    05FD: 25 00 FF                              and ax, 0FF00H
+[ 598]    0600: D1 E8                                 shr ax,1
+[ 599]    0602: D1 E8                                 shr ax,1
+[ 600]    0604: D1 E8                                 shr ax,1
+[ 601]    0606: D1 E8                                 shr ax,1
+[ 602]    0608: D1 E8                                 shr ax,1
+[ 603]    060A: D1 E8                                 shr ax,1
+[ 604]    060C: D1 E8                                 shr ax,1
+[ 605]    060E: D1 E8                                 shr ax,1
+[ 606]    0610: 53                                    push bx
+[ 607]    0611: B7 A0                                 mov bh, 160
+[ 608]    0613: F6 E7                                 mul bh
+[ 609]    0615: 5B                                    pop bx
+[ 610]    0616: 81 E2 FF 00                           and dx, 0FFH
+[ 611]    061A: D1 E2                                 shl dx,1
+[ 612]    061C: 03 C2                                 add ax, dx
+[ 613]    061E: 8B F8                                 mov di, ax
+[ 614]    0620: 26 8A 1D                              mov bl,es:[di]
+[ 615]    0623: 5A                                    pop dx
+[ 616]    0624: C3                                    ret
+[ 617]        :                                       readcharat endp
+[ 618]        :                                       
+[ 619]        :                                       
+[ 620]        :                                       
+[ 621]        :                                       
+[ 622]        :                                       
+[ 623]        :                                       
+[ 624]        :                                       ;dx contains row, col
+[ 625]        :                                       ;bx contains the offset of the string
+[ 626]    0625:                                       writestringat proc
+[ 627]    0625: 52                                    push dx
+[ 628]    0626: 8B C2                                 mov ax, dx
+[ 629]    0628: 25 00 FF                              and ax, 0FF00H
+[ 630]    062B: D1 E8                                 shr ax,1
+[ 631]    062D: D1 E8                                 shr ax,1
+[ 632]    062F: D1 E8                                 shr ax,1
+[ 633]    0631: D1 E8                                 shr ax,1
+[ 634]    0633: D1 E8                                 shr ax,1
+[ 635]    0635: D1 E8                                 shr ax,1
+[ 636]    0637: D1 E8                                 shr ax,1
+[ 637]    0639: D1 E8                                 shr ax,1
+[ 638]        :                                       
+[ 639]    063B: 53                                    push bx
+[ 640]    063C: B7 A0                                 mov bh, 160
+[ 641]    063E: F6 E7                                 mul bh
+[ 642]        :                                       
+[ 643]    0640: 5B                                    pop bx
+[ 644]    0641: 81 E2 FF 00                           and dx, 0FFH
+[ 645]    0645: D1 E2                                 shl dx,1
+[ 646]    0647: 03 C2                                 add ax, dx
+[ 647]    0649: 8B F8                                 mov di, ax
+[ 648]    064B:                                       loop_writestringat:
+[ 649]        :                                       
+[ 650]    064B: 8A 07                                 mov al, [bx]
+[ 651]    064D: 84 C0                                 test al, al
+[ 652]    064F: 74 08                                 jz exit_writestringat
+[ 653]    0651: 26 88 05                              mov es:[di], al
+[ 654]    0654: 47                                    inc di
+[ 655]    0655: 47                                    inc di
+[ 656]    0656: 43                                    inc bx
+[ 657]    0657: EB F2                                 jmp loop_writestringat
+[ 658]        :                                       
+[ 659]        :                                       
+[ 660]    0659:                                       exit_writestringat:
+[ 661]    0659: 5A                                    pop dx
+[ 662]    065A: C3                                    ret
+[ 663]        :                                       
+[ 664]        :                                       
+[ 665]        :                                       writestringat endp
+[ 666]        :                                       
+[ 667]        :                                       end main
+[ 668]        :                                       
+[ 669]        :                                       ret
+[ 670]        :                                       
+[ 671]        :                                       
+[ 672]        :                                       
+[ 673]        :                                       
+[ 674]        :                                       
+[ 675]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

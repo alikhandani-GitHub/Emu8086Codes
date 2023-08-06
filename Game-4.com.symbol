@@ -1,0 +1,24 @@
+< THE SYMBOL TABLE >  Game-4.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+MSG                      	00103     	-1        	LABEL     	(NOSEG)   
+MSG2                     	0012D     	-1        	LABEL     	(NOSEG)   
+MSG3                     	00140     	-1        	LABEL     	(NOSEG)   
+MSG4                     	00154     	-1        	LABEL     	(NOSEG)   
+MSG5                     	00164     	-1        	LABEL     	(NOSEG)   
+MSG6                     	0016F     	-1        	LABEL     	(NOSEG)   
+START                    	001B8     	-1        	LABEL     	(NOSEG)   
+ADDITION                 	001E9     	-1        	LABEL     	(NOSEG)   
+INPUTNO                  	00218     	-1        	LABEL     	(NOSEG)   
+FORMNO                   	00232     	-1        	LABEL     	(NOSEG)   
+VIEW                     	0024B     	-1        	LABEL     	(NOSEG)   
+VIEWNO                   	0026B     	-1        	LABEL     	(NOSEG)   
+EXIT                     	00279     	-1        	LABEL     	(NOSEG)   
+MULTIPLY                 	00285     	-1        	LABEL     	(NOSEG)   
+SUBTRACT                 	002B8     	-1        	LABEL     	(NOSEG)   
+DIVIDE                   	002E9     	-1        	LABEL     	(NOSEG)   
+===================================================================================================
+[ 09/01/2023  --  07:21:45 È.Ù ] 
+< END >
+ 

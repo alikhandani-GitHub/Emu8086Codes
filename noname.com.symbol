@@ -1,0 +1,48 @@
+< THE SYMBOL TABLE >  noname.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+EXIT                     	00103     	1         	VAR       	(NOSEG)   
+PLAYER_POS               	00104     	2         	VAR       	(NOSEG)   
+ARROW_POS                	00106     	2         	VAR       	(NOSEG)   
+ARROW_STATUS             	00108     	1         	VAR       	(NOSEG)   
+ARROW_LIMIT              	00109     	2         	VAR       	(NOSEG)   
+LOON_POS                 	0010B     	2         	VAR       	(NOSEG)   
+LOON_STATUS              	0010D     	1         	VAR       	(NOSEG)   
+DIRECTION                	0010E     	1         	VAR       	(NOSEG)   
+STATE_BUF                	0010F     	1         	VAR       	(NOSEG)   
+HIT_NUM                  	00122     	1         	VAR       	(NOSEG)   
+HITS                     	00123     	2         	VAR       	(NOSEG)   
+MISS                     	00125     	2         	VAR       	(NOSEG)   
+GAME_OVER_STR            	00127     	2         	VAR       	(NOSEG)   
+GAME_START_STR           	0027F     	2         	VAR       	(NOSEG)   
+CODE                     	006EF     	-1        	LABEL     	(NOSEG)   
+MAIN                     	006EF     	-1        	NEAR      	(NOSEG)   
+MAIN_LOOP                	006FB     	-1        	LABEL     	(NOSEG)   
+INSIDE_LOOP              	00706     	-1        	LABEL     	(NOSEG)   
+HIT                      	00747     	-1        	LABEL     	(NOSEG)   
+RENDER_LOON              	00768     	-1        	LABEL     	(NOSEG)   
+RENDER_ARROW             	0078D     	-1        	LABEL     	(NOSEG)   
+INSIDE_LOOP2             	007A8     	-1        	LABEL     	(NOSEG)   
+PLAYER_UP                	007C2     	-1        	LABEL     	(NOSEG)   
+PLAYER_DOWN              	007DA     	-1        	LABEL     	(NOSEG)   
+KEY_PRESSED              	007F2     	-1        	LABEL     	(NOSEG)   
+LEFTKEY                  	0080D     	-1        	LABEL     	(NOSEG)   
+UPKEY                    	00827     	-1        	LABEL     	(NOSEG)   
+DOWNKEY                  	0082F     	-1        	LABEL     	(NOSEG)   
+SPACEKEY                 	00837     	-1        	LABEL     	(NOSEG)   
+FIRE_ARROW               	00841     	-1        	LABEL     	(NOSEG)   
+MISS_LOON                	0085E     	-1        	LABEL     	(NOSEG)   
+FIRE_LOON                	00878     	-1        	LABEL     	(NOSEG)   
+HIDE_ARROW               	00886     	-1        	LABEL     	(NOSEG)   
+GAME_OVER                	008A5     	-1        	LABEL     	(NOSEG)   
+INPUT                    	008EF     	-1        	LABEL     	(NOSEG)   
+GAME_MENU                	008FD     	-1        	LABEL     	(NOSEG)   
+INPUT2                   	00906     	-1        	LABEL     	(NOSEG)   
+EXIT_GAME                	00927     	-1        	LABEL     	(NOSEG)   
+SHOW_SCORE               	0092C     	-1        	NEAR      	(NOSEG)   
+CLEAR_SCREEN             	0097F     	-1        	NEAR      	(NOSEG)   
+===================================================================================================
+[ 09/01/2023  --  07:10:32 È.Ù ] 
+< END >
+ 
